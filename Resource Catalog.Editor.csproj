@@ -106,6 +106,9 @@
     <Reference Include="UnityEditor.Graphs">
       <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
@@ -120,24 +123,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\AssetPathAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\AxesConstraintAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\EnumFlagsAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\LimitedRangeAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\LimitedVector2AttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\MinAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\ReadOnlyAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\SortingLayerAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Attributes\Editor\Property Drawers\VisibilityAttributeDrawer.cs" />
-    <Compile Include="Assets\Resource\Curves\Editor\BezierSplineInspector.cs" />
-    <Compile Include="Assets\Resource\Editor\AnimationHierarchyFixer.cs" />
-    <Compile Include="Assets\Resource\Editor\Curves\CurveUtils.cs" />
-    <Compile Include="Assets\Resource\Editor\EditorConstants.cs" />
-    <Compile Include="Assets\Resource\Editor\ReferenceFinder.cs" />
-    <Compile Include="Assets\Resource\Editor\uGUITools.cs" />
-    <Compile Include="Assets\Resource\Objects\State Machines\Editor\StateEditor.cs" />
-    <Compile Include="Assets\Resource\Objects\State Machines\Editor\StateMachineEditor.cs" />
-    <Compile Include="Assets\Resource\UI\CurvedText\Editor\CurveTextInspector.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\AssetPathAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\AxesConstraintAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\EnumFlagsAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\LimitedRangeAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\LimitedVector2AttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\LimitedVector3AttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\MinAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\ReadOnlyAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\SortingLayerAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Attributes\Editor\Property Drawers\VisibilityAttributeDrawer.cs" />
+    <Compile Include="Assets\Extensions\Curves\Editor\BezierSplineInspector.cs" />
+    <Compile Include="Assets\Extensions\Editor\AnimationRemapper.cs" />
+    <Compile Include="Assets\Extensions\Editor\ReferenceFinder.cs" />
+    <Compile Include="Assets\Extensions\Editor\uGUITools.cs" />
+    <Compile Include="Assets\Extensions\Objects\State Machines\Editor\StateEditor.cs" />
+    <Compile Include="Assets\Extensions\Objects\State Machines\Editor\StateMachineEditor.cs" />
+    <Compile Include="Assets\Extensions\UI\CurvedText\Editor\CurveTextInspector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
