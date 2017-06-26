@@ -1,4 +1,3 @@
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,8 +10,8 @@ namespace Extensions.Properties {
         private Object asset = null;
         AssetPathAttribute assetAttribute;
 
-        private Texture textIcon = Resources.Load<Texture>("Images/ab_bold");
-        private Texture objectIcon = Resources.Load<Texture>("Images/box_3d");
+        private Texture textIcon = Resources.Load<Texture>("Images/ab-bold");
+        private Texture objectIcon = Resources.Load<Texture>("Images/box-3d");
 
         #region GUI Functions
         public override void OnGUI(Rect aRect, SerializedProperty aProperty, GUIContent aLabel) {

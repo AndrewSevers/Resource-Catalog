@@ -18,6 +18,9 @@ namespace Resource.Editor {
         private Vector2 scrollPosition = Vector2.zero;
         private string error = null;
 
+        private const string upArrowUnicode = "\u25b2";
+        private const string downArrowUnicode = "\u25bc";
+
         [MenuItem("Window/Animation Remapper")]
         private static void ShowAnimationHierarchyWindow() {
             AnimationRemapper window = GetWindow<AnimationRemapper>(true, "Animation Remapper", true);
@@ -59,12 +62,19 @@ namespace Resource.Editor {
 
         #region Editor Binding Info Class
         public class EditorBindingInfo {
+            private AnimationClipInfo clipInfo;
             private string path;
             private string newPath;
-            private List<EditorCurveBinding> bindings;
+            private List<EditorCurveBinding> bindings;                                              // Bindings for the current animation clip
+            private List<EditorBindingInfo> associatedBindings = new List<EditorBindingInfo>();     // Matching bindings from other animation clips that have the same path
             private bool hasPendingChanges = false;
+            private bool showAssociatedBindings = false;
 
             #region Getters & Setters
+            public AnimationClipInfo ClipInfo {
+                get { return clipInfo; }
+            }
+
             public string Path {
                 get { return path; }
             }
@@ -78,13 +88,24 @@ namespace Resource.Editor {
                 set { bindings = value; }
             }
 
+            public List<EditorBindingInfo> AssociatedBindings {
+                get { return associatedBindings; }
+                set { associatedBindings = value; }
+            }
+
             public bool HasPendingChanges {
                 get { return hasPendingChanges; }
+            }
+
+            public bool ShowAssociatedBindings {
+                get { return showAssociatedBindings; }
+                set { showAssociatedBindings = value; }
             }
             #endregion
 
             #region Contructor
-            public EditorBindingInfo(string aPath, List<EditorCurveBinding> aBindings) {
+            public EditorBindingInfo(AnimationClipInfo aClipInfo, string aPath, List<EditorCurveBinding> aBindings) {
+                clipInfo = aClipInfo;
                 path = aPath;
                 bindings = aBindings;
             }
@@ -96,6 +117,7 @@ namespace Resource.Editor {
 
                 newPath = null;
                 hasPendingChanges = false;
+                showAssociatedBindings = false;
             }
 
             public void SetPendingUpdate(string aNewPath) {
@@ -106,6 +128,7 @@ namespace Resource.Editor {
             public void ClearPendingChanges() {
                 newPath = null;
                 hasPendingChanges = false;
+                showAssociatedBindings = false;
             }
             #endregion
 
@@ -131,6 +154,7 @@ namespace Resource.Editor {
 
             // Draw selected animation clips bindings
             if (clips != null && clips.Count > 0) {
+                int originalClipIndex = clipIndex;
                 clipIndex = EditorGUILayout.Popup(clipIndex, clips.Select(c => c.Clip.name).ToArray());
 
                 GUILayout.EndHorizontal();
@@ -139,9 +163,9 @@ namespace Resource.Editor {
                 GUILayout.Label(string.Empty, GUI.skin.horizontalSlider);
 
                 // Draw bindings for the selected animation
-                GUILayout.BeginScrollView(scrollPosition);
+                scrollPosition = GUILayout.BeginScrollView(scrollPosition);
                 foreach (EditorBindingInfo info in clips[clipIndex].Bindings) {
-                    DrawObjectReference(clips[clipIndex], info);
+                    DrawObjectReference(info, originalClipIndex != clipIndex);
                 }
                 GUILayout.EndScrollView();
             } else {
@@ -185,7 +209,7 @@ namespace Resource.Editor {
                 foreach (AnimationClipInfo clipInfo in clips) {
                     foreach (EditorBindingInfo bindingInfo in clipInfo.Bindings) {
                         if (bindingInfo.HasPendingChanges) {
-                            ApplyPendingChanges(clipInfo, bindingInfo);
+                            ApplyPendingChanges(bindingInfo);
                         }
                     }
                 }
@@ -206,12 +230,27 @@ namespace Resource.Editor {
         /// </summary>
         /// <param name="aClipInfo">AnimationClipInfo associated to the BindingInfo to draw</param>
         /// <param name="aBindingInfo">BindingInfo to draw</param>
-        private void DrawObjectReference(AnimationClipInfo aClipInfo, EditorBindingInfo aBindingInfo) {
+        private void DrawObjectReference(EditorBindingInfo aBindingInfo, bool aIsInitialDraw) {
             GameObject objectReference = FindObjectInRoot(aBindingInfo.Path);
 
-            GUILayout.BeginHorizontal();
+            // Cleanup references when drawing them for the first time (or switching which animation clip is being drawn)
+            if (aIsInitialDraw) {
+                aBindingInfo.ShowAssociatedBindings = false;
+                
+            }
 
-            GUIContent label = new GUIContent("Path: /" + aBindingInfo.Path, "/" + aBindingInfo.Path);
+            if (aBindingInfo.HasPendingChanges) {
+                GUI.color = Color.yellow;
+            } else if (objectReference != null) {
+                GUI.color = Color.green;
+            } else {
+                GUI.color = Color.red;
+            }
+
+            GUILayout.BeginHorizontal(EditorStyles.helpBox);
+            GUI.color = defaultColor;
+            
+            GUIContent label = new GUIContent(" Path: /" + aBindingInfo.Path, "/" + aBindingInfo.Path);
             GUILayout.Label(label, GUILayout.Width(150.0f));
 
             if (aBindingInfo.HasPendingChanges) {
@@ -219,9 +258,7 @@ namespace Resource.Editor {
             }
 
             // Draw the object field with the latest information and color it based on status. Red = invalid object (null), Yellow = pending change, Green = valid object
-            GUI.color = (objectReference != null) ? (aBindingInfo.HasPendingChanges) ? Color.yellow : Color.green : Color.red;
             GameObject newObjectReference = EditorGUILayout.ObjectField(objectReference, typeof(GameObject), true) as GameObject;
-            GUI.color = defaultColor;
 
             // Update binding info's pending change data with new object reference
             if (newObjectReference != objectReference) {
@@ -234,19 +271,89 @@ namespace Resource.Editor {
 
             GUI.enabled = aBindingInfo.HasPendingChanges;
 
-            if (GUILayout.Button("Apply", EditorStyles.miniButton)) {
-                ApplyPendingChanges(aClipInfo, aBindingInfo);
+            if (GUILayout.Button("Apply", EditorStyles.miniButtonLeft)) {
+                // Setup list of bindings to update base on the curently selected one as well as the current one's associated bindings
+                List<EditorBindingInfo> bindings = new List<EditorBindingInfo>() { aBindingInfo };
+                foreach (EditorBindingInfo associatedBindingInfo in aBindingInfo.AssociatedBindings) {
+                    if (associatedBindingInfo.HasPendingChanges && associatedBindingInfo.NewPath.Equals(aBindingInfo.NewPath)) {
+                        bindings.Add(associatedBindingInfo);
+                    }
+                }
+
+                ApplyPendingChanges(bindings.ToArray());
             }
 
-            if (GUILayout.Button("Clear", EditorStyles.miniButton)) {
+            if (GUILayout.Button("Clear", EditorStyles.miniButtonMid)) {
                 ClearPendingChanges(aBindingInfo);
+            }
+
+            if (aBindingInfo.AssociatedBindings.Count > 0) {
+                GUI.enabled = true;
+            }
+
+            // Diplay the show associated bindings button
+            string arrowUnicode = (aBindingInfo.ShowAssociatedBindings) ? upArrowUnicode : downArrowUnicode;
+            GUIContent expandContent = new GUIContent(arrowUnicode, "Expand to show associated bindings among the other animation clips on this animator");
+
+            if (GUILayout.Button(expandContent, EditorStyles.miniButtonRight)) {
+                aBindingInfo.ShowAssociatedBindings = !aBindingInfo.ShowAssociatedBindings;
             }
 
             GUI.enabled = true;
 
             GUILayout.EndHorizontal();
+
+            // Draw associated bindings
+            if (aBindingInfo.ShowAssociatedBindings) {
+                if (aBindingInfo.HasPendingChanges == false) {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(" Can't modify associated bindings if the current one is not being modified.", EditorStyles.miniLabel);
+                    GUILayout.EndHorizontal();
+                } else {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(" List of animations with this same binding. Check to associate changes across animations.", EditorStyles.miniLabel);
+                    GUILayout.EndHorizontal();
+
+                    foreach (EditorBindingInfo associatedBindingInfo in aBindingInfo.AssociatedBindings) {
+                        DrawAssociatedObjectReference(aBindingInfo, associatedBindingInfo);
+                    }
+                }
+            }
         }
-        
+
+        private void DrawAssociatedObjectReference(EditorBindingInfo aCurrentBindingInfo, EditorBindingInfo aAssociatedBindingInfo) {
+            GUILayout.BeginHorizontal();
+
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginHorizontal(EditorStyles.helpBox, GUILayout.Width(EditorGUIUtility.currentViewWidth / 1.25f));
+            GUIContent label = new GUIContent(" Clip - [" + aAssociatedBindingInfo.ClipInfo.Clip.name + "]", aAssociatedBindingInfo.ClipInfo.Clip.name);
+            GUILayout.Label(label);
+            
+            GUILayout.FlexibleSpace();
+
+            if (aAssociatedBindingInfo.HasPendingChanges && aAssociatedBindingInfo.NewPath.Equals(aCurrentBindingInfo.NewPath) == false) {
+                GUILayout.Label("Clip already has different pending changes", EditorStyles.miniLabel);
+            } else {
+                bool set = GUILayout.Toggle(aAssociatedBindingInfo.HasPendingChanges, string.Empty);
+                if (set) {
+                    if (aAssociatedBindingInfo.HasPendingChanges == false) {
+                        aAssociatedBindingInfo.SetPendingUpdate(aCurrentBindingInfo.NewPath);
+                        pendingChanges++;
+                    }
+                } else {
+                    if (aAssociatedBindingInfo.HasPendingChanges) {
+                        aAssociatedBindingInfo.ClearPendingChanges();
+                        pendingChanges--;
+                    }
+                }
+            }
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndHorizontal();
+        }
+
         private void DrawError() {
             GUI.color = Color.red;
             GUILayout.Label(error, EditorStyles.whiteLargeLabel);
@@ -254,7 +361,7 @@ namespace Resource.Editor {
         }
         #endregion
 
-        #region Animator
+        #region Animator/Clips Setup
         /// <summary>
         /// Setup the active animator by caching the reference
         /// </summary>
@@ -275,93 +382,111 @@ namespace Resource.Editor {
         /// </summary>
         private void SetupAnimationClips() {
             if (animator != null) {
-                if (clips == null) {
-                    clips = new List<AnimationClipInfo>();
-                }
-
                 if (animator.runtimeAnimatorController != null) {
                     if (animator.runtimeAnimatorController.animationClips.Length > 0) {
                         clips = new List<AnimationClipInfo>();
 
+                        // Setup animation clip bindings
                         foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips) {
-                            clips.Add(new AnimationClipInfo(clip, SetupAnimationClipBindings(clip)));
+                            AnimationClipInfo info = new AnimationClipInfo(clip);
+                            info.Bindings = SetupAnimationClipBindings(info);
+
+                            clips.Add(info);
                         }
+
+                        // Setup associative connections
+                        SetupAssociativeBindings();
                     } else {
                         error = "Animator contains no animation clips";
                     }
                 } else {
                     error = "Animator contains no runtime controller";
                 }
+            }
+        }
 
+        /// <summary>
+        /// Multiple animation clips can have the same EditorCurveBindings so connect those
+        /// </summary>
+        private void SetupAssociativeBindings(bool aRefreshAssociations = false) {
+            foreach (AnimationClipInfo clipInfo in clips) {
+                foreach (EditorBindingInfo bindingInfo in clipInfo.Bindings) {
+                    if (aRefreshAssociations) {
+                        bindingInfo.AssociatedBindings.Clear();
+                    }
+
+                    foreach (AnimationClipInfo clipInfo2 in clips) {
+                        if (clipInfo == clipInfo2) {
+                            continue;
+                        }
+
+                        foreach (EditorBindingInfo bindingInfo2 in clipInfo2.Bindings) {
+                            if (bindingInfo.Path.Equals(bindingInfo2.Path) == false) {
+                                continue;
+                            }
+
+                            bindingInfo.AssociatedBindings.Add(bindingInfo2);
+                        }
+                    }
+                }
             }
         }
 
         /// <summary>
         /// Cache animaiton clip bindings. There can be multiple bindings to a single path (object) since each animation property is a new binding.
         /// </summary>
-        /// <param name="aClip">Clip to generate a list of bindings for</param>
-        private List<EditorBindingInfo> SetupAnimationClipBindings(AnimationClip aClip) {
+        /// <param name="aClipInfo">Clip to generate a list of bindings for</param>
+        private List<EditorBindingInfo> SetupAnimationClipBindings(AnimationClipInfo aClipInfo) {
             // MultiDictionary holds a single key to many values
             MultiDictionary<string, EditorCurveBinding> bindingsMap = new MultiDictionary<string, EditorCurveBinding>();
-            foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(aClip)) {
+            foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(aClipInfo.Clip)) {
                 bindingsMap.Add(binding.path, binding);
             }
 
-            foreach (EditorCurveBinding binding in AnimationUtility.GetObjectReferenceCurveBindings(aClip)) {
+            foreach (EditorCurveBinding binding in AnimationUtility.GetObjectReferenceCurveBindings(aClipInfo.Clip)) {
                 bindingsMap.Add(binding.path, binding);
             }
 
             // Convert the MultiDictionary to a list of modifiable and maintainable objects (this allows us to support "pending" changes)
             List<EditorBindingInfo> bindings = new List<EditorBindingInfo>();
             foreach (string key in bindingsMap.Keys) {
-                bindings.Add(new EditorBindingInfo(key, bindingsMap[key]));
+                bindings.Add(new EditorBindingInfo(aClipInfo, key, bindingsMap[key]));
             }
 
             return bindings;
         }
         #endregion
 
-        #region Object References
+        #region Object References Modifications
         /// <summary>
         /// Apply changes to the provided BindingInfo by updating the animations object bindings
         /// </summary>
         /// <param name="aClipInfo">AnimationClipInfo associated to the BindingInfo</param>
         /// <param name="aBindingInfo">BindingInfo to update</param>
-        private void ApplyPendingChanges(AnimationClipInfo aClipInfo, EditorBindingInfo aBindingInfo) {
+        private void ApplyPendingChanges(params EditorBindingInfo[] aBindingInfos) {
             EditorUtility.DisplayProgressBar("Processing", "Remapping animation bindings!", 0.0f);
-            float progressIteration = (100.0f / (float) aBindingInfo.Bindings.Count);
+            float progressIteration = (100.0f / (float) aBindingInfos.Length);
             float progress = 0;
 
             AssetDatabase.StartAssetEditing();
 
-            foreach (EditorCurveBinding binding in aBindingInfo.Bindings) {
-                EditorCurveBinding bindingToUpdate = binding;
-                AnimationCurve curve = AnimationUtility.GetEditorCurve(aClipInfo.Clip, bindingToUpdate);
+            foreach (EditorBindingInfo info in aBindingInfos) {
+                foreach (EditorCurveBinding binding in info.Bindings) {
+                    UpdateBinding(info, binding);
 
-                if (curve != null) {
-                    AnimationUtility.SetEditorCurve(aClipInfo.Clip, bindingToUpdate, null);
-                } else {
-                    AnimationUtility.SetObjectReferenceCurve(aClipInfo.Clip, bindingToUpdate, null);
+                    progress += progressIteration;
+                    EditorUtility.DisplayProgressBar("Processing", "Remapping animation bindings!", progress);
                 }
 
-                bindingToUpdate.path = aBindingInfo.NewPath;
+                pendingChanges--;
 
-                if (curve != null) {
-                    AnimationUtility.SetEditorCurve(aClipInfo.Clip, bindingToUpdate, curve);
-                } else {
-                    ObjectReferenceKeyframe[] objectReferenceCurve = AnimationUtility.GetObjectReferenceCurve(aClipInfo.Clip, bindingToUpdate);
-                    AnimationUtility.SetObjectReferenceCurve(aClipInfo.Clip, bindingToUpdate, objectReferenceCurve);
-                }
-
-                progress += progressIteration;
-                EditorUtility.DisplayProgressBar("Processing", "Remapping animation bindings!", progress);
+                info.UpdatePath();
             }
 
+            // Refresh associative bindings now that paths have changes
+            SetupAssociativeBindings(true);
+
             AssetDatabase.StopAssetEditing();
-
-            pendingChanges--;
-
-            aBindingInfo.UpdatePath();
 
             Repaint();
 
@@ -379,6 +504,26 @@ namespace Resource.Editor {
         #endregion
 
         #region Utilities
+        private void UpdateBinding(EditorBindingInfo aBindingInfo, EditorCurveBinding aBinding) {
+            EditorCurveBinding bindingToUpdate = aBinding;
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate);
+
+            if (curve != null) {
+                AnimationUtility.SetEditorCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate, null);
+            } else {
+                AnimationUtility.SetObjectReferenceCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate, null);
+            }
+
+            bindingToUpdate.path = aBindingInfo.NewPath;
+
+            if (curve != null) {
+                AnimationUtility.SetEditorCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate, curve);
+            } else {
+                ObjectReferenceKeyframe[] objectReferenceCurve = AnimationUtility.GetObjectReferenceCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate);
+                AnimationUtility.SetObjectReferenceCurve(aBindingInfo.ClipInfo.Clip, bindingToUpdate, objectReferenceCurve);
+            }
+        }
+
         /// <summary>
         /// Get the absolute path for the object (recursive function)
         /// </summary>
