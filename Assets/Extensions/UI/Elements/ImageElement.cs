@@ -8,8 +8,6 @@ namespace Extensions.UI {
     public class ImageElement : MonoBehaviour {
         [SerializeField]
         private TransitionType transition = TransitionType.Sprites;
-        [SerializeField]
-        private TransitionState state = TransitionState.Default;
 
         public enum TransitionState {
             Default,
@@ -26,33 +24,33 @@ namespace Extensions.UI {
         }
 
         // Sprites
-        [SerializeField, Visibility("transition", true, TransitionType.Sprites)]
+        [SerializeField, Visibility("transition", TransitionType.Sprites)]
         private Sprite normalSprite;
-        [SerializeField, Visibility("transition", true, TransitionType.Sprites)]
+        [SerializeField, Visibility("transition", TransitionType.Sprites)]
         private Sprite highlightsSprite;
-        [SerializeField, Visibility("transition", true, TransitionType.Sprites)]
+        [SerializeField, Visibility("transition", TransitionType.Sprites)]
         private Sprite pressedSprite;
-        [SerializeField, Visibility("transition", true, TransitionType.Sprites)]
+        [SerializeField, Visibility("transition", TransitionType.Sprites)]
         private Sprite disabledSprite;
 
         // Colors
-        [SerializeField, Visibility("transition", true, TransitionType.Colors)]
+        [SerializeField, Visibility("transition", TransitionType.Colors)]
         private Color normalColor = new Color(1.0f, 1.0f, 1.0f);
-        [SerializeField, Visibility("transition", true, TransitionType.Colors)]
+        [SerializeField, Visibility("transition", TransitionType.Colors)]
         private Color highlightColor = new Color(0.8f, 0.8f, 1.0f);
-        [SerializeField, Visibility("transition", true, TransitionType.Colors)]
+        [SerializeField, Visibility("transition", TransitionType.Colors)]
         private Color pressedColor = new Color(0.5f, 0.5f, 1.0f);
-        [SerializeField, Visibility("transition", true, TransitionType.Colors)]
+        [SerializeField, Visibility("transition", TransitionType.Colors)]
         private Color disabledColor = new Color(0.2f, 0.2f, 1.0f);
 
         // Triggers
-        [SerializeField, Visibility("transition", true, TransitionType.Animation)]
+        [SerializeField, Visibility("transition", TransitionType.Animation)]
         private string normalTrigger = "Normal";
-        [SerializeField, Visibility("transition", true, TransitionType.Animation)]
+        [SerializeField, Visibility("transition", TransitionType.Animation)]
         private string highlightedTrigger = "Highlighted";
-        [SerializeField, Visibility("transition", true, TransitionType.Animation)]
+        [SerializeField, Visibility("transition", TransitionType.Animation)]
         private string pressedTrigger = "Pressed";
-        [SerializeField, Visibility("transition", true, TransitionType.Animation)]
+        [SerializeField, Visibility("transition", TransitionType.Animation)]
         private string disabledTrigger = "Disabled";
 
         private Image image;
@@ -67,10 +65,6 @@ namespace Extensions.UI {
         public bool Active {
             get { return image.enabled; }
             set { image.enabled = value; }
-        }
-
-        public TransitionState State {
-            get { return state; }
         }
 
         public Sprite NormalSprite {
@@ -104,8 +98,8 @@ namespace Extensions.UI {
                 }
             }
 
-            // Set initial state
-            Display(state);
+            // Display initial state
+            DisplayNormal();
 
             initialized = true;
         }
@@ -127,8 +121,6 @@ namespace Extensions.UI {
                     DisplayDisabled();
                     break;
             }
-
-            state = aState;
         }
 
         private void DisplayNormal() {

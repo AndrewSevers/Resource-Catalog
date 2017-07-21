@@ -49,7 +49,7 @@ namespace Extensions.Properties {
                     break;
                 case SerializedPropertyType.Enum:
                     // Enable/Disable the GUI if the condition is matched
-                    conditionMatched = (visibilityAttribute.Result == (visibilityAttribute.GetExpectedValue<int>() == conditionalProperty.enumValueIndex));
+                    conditionMatched = (visibilityAttribute.GetExpectedValue<int>() == conditionalProperty.enumValueIndex);
                     GUI.enabled = conditionMatched;
 
                     // If the visibily is hidden then don't show. If the visibility is disabled then show with a disabled GUI.
@@ -92,7 +92,7 @@ namespace Extensions.Properties {
                 case SerializedPropertyType.String:
                     return ((string.IsNullOrEmpty(conditionalProperty.stringValue) == false) == visibilityAttribute.Result || visibilityAttribute.HideInInspector == false) ? EditorGUI.GetPropertyHeight(aProperty) : -EditorGUIUtility.standardVerticalSpacing;
                 case SerializedPropertyType.Enum:
-                    return ((visibilityAttribute.GetExpectedValue<int>() == conditionalProperty.enumValueIndex) == visibilityAttribute.Result || visibilityAttribute.HideInInspector == false) ? EditorGUI.GetPropertyHeight(aProperty) : -EditorGUIUtility.standardVerticalSpacing;
+                    return (visibilityAttribute.GetExpectedValue<int>() == conditionalProperty.enumValueIndex || visibilityAttribute.HideInInspector == false) ? EditorGUI.GetPropertyHeight(aProperty) : -EditorGUIUtility.standardVerticalSpacing;
                 default:
                     return ((conditionalProperty.objectReferenceValue != null) == visibilityAttribute.Result || visibilityAttribute.HideInInspector == false) ? EditorGUI.GetPropertyHeight(aProperty) : -EditorGUIUtility.standardVerticalSpacing;
             }

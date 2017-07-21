@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class RewardElement : MonoBehaviour {
     [SerializeField, Tooltip("Optional field that if set will get a specific reward group attached to this element")]
     private string rewardGroupId;
-    [SerializeField, Tooltip("Optional field that if set will get this specific reward attached to this element"), Visibility("rewardGroupId", true, false, false)]
+    [SerializeField, Tooltip("Optional field that if set will get this specific reward attached to this element"), Visibility("rewardGroupId", true, false)]
     private string rewardId;
 
     [Header("Reward Details")]

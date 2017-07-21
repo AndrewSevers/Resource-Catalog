@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Extensions.Properties {
 
     /// <summary>
-    /// Display the given field as a string with optional dialog finder window
+    /// Support drag-n-drop and clickable object references in the inspector while actually storing their references as a string as to reduce memory consumption
     /// </summary>
     public class AssetPathAttribute : PropertyAttribute {
         private AssetType type;

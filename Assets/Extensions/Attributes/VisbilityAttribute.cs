@@ -25,19 +25,29 @@ namespace Extensions.Properties {
 		public bool HideInInspector {
 			get { return hideInInspector; }
 		}
-		#endregion
+        #endregion
 
-		#region Constructor
+        #region Constructor
         /// <summary>
-        /// Display the attached property based on whether or not the given, or selected, property matches the given result
+        /// Display the attached property based on whether or not the given, or selected, property's state matches the given result
         /// </summary>
         /// <param name="aPropertyName">Property to compare</param>
-        /// <param name="aResult">Result to expect</param>
+        /// <param name="aExpectedResult">Result to expect</param>
+        /// <param name="aHideInInspector">Whether or not the attached property is hidden completely from the inspector if the result doesn't match</param>
+        public VisibilityAttribute(string aPropertyName, bool aExpectedResult, bool aHideInInspector = true) {
+            propertyName = aPropertyName;
+            result = aExpectedResult;
+            hideInInspector = aHideInInspector;
+        }
+
+        /// <summary>
+        /// Display the attached property based on whether or not the given, or selected, property's value matches the given value
+        /// </summary>
+        /// <param name="aPropertyName">Property to compare</param>
         /// <param name="aExpectedValue">Possible value to compare against</param>
         /// <param name="aHideInInspector">Whether or not the attached property is hidden completely from the inspector if the result doesn't match</param>
-		public VisibilityAttribute(string aPropertyName, bool aResult, object aExpectedValue = null, bool aHideInInspector = true) {
+		public VisibilityAttribute(string aPropertyName, object aExpectedValue, bool aHideInInspector = true) {
 			propertyName = aPropertyName;
-			result = aResult;
             expectedValue = aExpectedValue;
 			hideInInspector = aHideInInspector;
         }

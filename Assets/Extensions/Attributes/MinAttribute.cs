@@ -2,11 +2,10 @@ using UnityEngine;
 
 namespace Extensions.Properties {
 
-	/// <summary>
-	/// Display the given field as a read-only variable. 
-	/// Disallows any modifications to take place in the inspector.
-	/// </summary>
-	public class MinAttribute : PropertyAttribute {
+    /// <summary>
+    /// Force the int/float value to never exceed the minimum provided value.
+    /// </summary>
+    public class MinAttribute : PropertyAttribute {
 		private float minValue;
 
 		#region Getters & Setters

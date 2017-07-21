@@ -1,29 +1,29 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace Extensions.Properties {
 
-    [CustomPropertyDrawer(typeof(MinAttribute))]
-    public class MinAttributeDrawer : PropertyDrawer {
+    [CustomPropertyDrawer(typeof(MaxAttribute))]
+    public class MaxAttributeDrawer : PropertyDrawer {
 
         #region GUI Functions
         public override void OnGUI(Rect aRect, SerializedProperty aProperty, GUIContent aLabel) {
-            MinAttribute minAttribute = attribute as MinAttribute;
+            MaxAttribute maxAttribute = attribute as MaxAttribute;
 
             switch (aProperty.propertyType) {
                 case SerializedPropertyType.Integer:
-                    aProperty.intValue = (int) Mathf.Clamp(aProperty.intValue, minAttribute.MinValue, int.MaxValue);
+                    aProperty.intValue = (int) Mathf.Clamp(aProperty.intValue, int.MinValue, maxAttribute.MaxValue);
                     EditorGUI.PropertyField(aRect, aProperty, true);
                     break;
                 case SerializedPropertyType.Float:
-                    aProperty.floatValue = Mathf.Clamp(aProperty.floatValue, minAttribute.MinValue, float.MaxValue);
+                    aProperty.floatValue = Mathf.Clamp(aProperty.floatValue, float.MinValue, maxAttribute.MaxValue);
                     EditorGUI.PropertyField(aRect, aProperty, true);
                     break;
                 default:
                     EditorGUI.LabelField(aRect, aLabel.text, "Property must be either a int or float.");
                     break;
             }
-            
+
             return;
         }
         #endregion

@@ -3,8 +3,7 @@ using UnityEngine;
 namespace Extensions.Properties {
 
     /// <summary>
-    /// Require the given property to be set to true (active) for this property to be enabled and modifiable.
-    /// If the given property is set to false (inactive) then this property will be disabled.
+    /// Only allow the value to be within the contrained bounds and display in the inspector as a multi-bounded slider for all vector values
     /// </summary>
     public class LimitedVector3Attribute : PropertyAttribute {
         private Vector3 minLimit, maxLimit;
