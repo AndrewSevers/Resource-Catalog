@@ -44,20 +44,23 @@ namespace Extensions {
         #endregion
 
         #region Loading
+        public static T Load<T>(string aFilePath) {
+            object data = Load(aFilePath);
+            return (data != null) ? (T) data : default(T);
+        }
+
         /// <summary>Load a file at the provided file path</summary>
         /// <param name="aFilePath">Path of the file to load</param>
-        /// <param name="aForceCreate">If the file does not exist create a new empty file</param>
-        public static object Load(string aFilePath, bool aForceCreate = true) {
-            object loadedData = null;
+        public static object Load(string aFilePath) {
+            object data = null;
 
             FileStream file = null;
             try {
-                FileMode mode = (aForceCreate) ? FileMode.OpenOrCreate : FileMode.Open;
-                file = File.Open(aFilePath, mode, FileAccess.Read);
+                if (File.Exists(aFilePath)) {
+                    file = File.Open(aFilePath, FileMode.Open, FileAccess.Read);
 
-                if (file != null) {
                     BinaryFormatter formatter = new BinaryFormatter();
-                    loadedData = formatter.Deserialize(file);
+                    data = formatter.Deserialize(file);
                 }
             } catch (Exception e) {
                 Debug.LogWarning("[FileManager] Error loading file: " + e.ToString());
@@ -69,7 +72,7 @@ namespace Extensions {
                 file = null;
             }
 
-            return loadedData;
+            return data;
         }
         #endregion
 
