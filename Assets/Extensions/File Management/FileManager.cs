@@ -16,27 +16,20 @@ namespace Extensions {
         public static bool Save(string aFilePath, object aData, bool aFormatAsJson = false) {
             bool success = false;
 
-            FileStream file = null;
             try {
-                file = File.Open(aFilePath, FileMode.Create, FileAccess.Write);
+                using (FileStream file = File.Open(aFilePath, FileMode.Create, FileAccess.Write)) {
+                    BinaryFormatter formatter = new BinaryFormatter();
 
-                BinaryFormatter formatter = new BinaryFormatter();
+                    if (aFormatAsJson) {
+                        formatter.Serialize(file, JsonUtility.ToJson(aData));
+                    } else {
+                        formatter.Serialize(file, aData);
+                    }
 
-                if (aFormatAsJson) {
-                    formatter.Serialize(file, JsonUtility.ToJson(aData));
-                } else {
-                    formatter.Serialize(file, aData);
+                    success = true;
                 }
-
-                success = true;
             } catch (Exception e) {
                 Debug.LogWarning("[FileManager] Error saving file: " + e.ToString());
-            } finally {
-                if (file != null) {
-                    file.Close();
-                }
-
-                file = null;
             }
 
             return success;
@@ -53,23 +46,16 @@ namespace Extensions {
         /// <param name="aFilePath">Path of the file to load</param>
         public static object Load(string aFilePath) {
             object data = null;
-
-            FileStream file = null;
+            
             try {
                 if (File.Exists(aFilePath)) {
-                    file = File.Open(aFilePath, FileMode.Open, FileAccess.Read);
-
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    data = formatter.Deserialize(file);
+                    using (FileStream file = File.Open(aFilePath, FileMode.Open, FileAccess.Read)) {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        data = formatter.Deserialize(file);
+                    }
                 }
             } catch (Exception e) {
                 Debug.LogWarning("[FileManager] Error loading file: " + e.ToString());
-            } finally {
-                if (file != null) {
-                    file.Close();
-                }
-
-                file = null;
             }
 
             return data;
