@@ -23,17 +23,28 @@ namespace Resource.Editor {
         private const string downArrowUnicode = "\u25bc";
 
         [MenuItem("Window/Animation Remapper")]
-        private static void ShowAnimationHierarchyWindow() {
+        private static void ShowAnimationRemapperWindow() {
             AnimationRemapper window = GetWindow<AnimationRemapper>(true, "Animation Remapper", true);
             window.SetupAnimator(Selection.activeGameObject);
             window.Initialize();
         }
 
         [MenuItem("GameObject/Remap Animation", false, 48)]
-        private static void ModifyAnimationHierarchy() {
+        private static void RemapAnimation() {
             AnimationRemapper window = GetWindow<AnimationRemapper>(true, "Animation Remapper", true);
             window.SetupAnimator(Selection.activeGameObject);
             window.Initialize();
+        }
+
+        [MenuItem("GameObject/Remap Animation", true)]
+        private static bool ValidateAnimatorStatus() {
+            bool hasAnimator = (Selection.activeGameObject.GetComponent<Animator>() != null);
+
+            if (hasAnimator == false) {
+                Debug.Log("[AnimationRemapper] GameObject does not have an animator!");
+            }
+
+            return hasAnimator;
         }
 
         #region Animation Clip Reference Class
@@ -60,8 +71,14 @@ namespace Resource.Editor {
             #endregion
 
             #region Utilities
-            public bool ContainsBinding(string aBindingPath) {
-                return bindings.Find(b => b.Path == aBindingPath || b.NewPath == aBindingPath) != null;
+            /// <summary>
+            /// Check to see if any of the editor bindings on the animation clip contains the path
+            /// </summary>
+            /// <param name="aBindingPath">Path to compare</param>
+            /// <param name="aBindingToIgnore">If provided the function will ignore this specific binding when comparing the path</param>
+            /// <returns></returns>
+            public bool ContainsBinding(string aBindingPath, EditorBindingInfo aBindingToIgnore = null) {
+                return bindings.Find(b => b != aBindingToIgnore && (b.Path == aBindingPath || b.NewPath == aBindingPath)) != null;
             }
             #endregion
         }
@@ -158,6 +175,8 @@ namespace Resource.Editor {
 
         #region OnGUI
         private void OnGUI() {
+            GUILayout.Space(5);
+
             GUILayout.BeginHorizontal();
 
             Animator currentAnimator = animator;
@@ -349,8 +368,8 @@ namespace Resource.Editor {
             GUILayout.FlexibleSpace();
             
             if (aAssociatedBindingInfo.HasPendingChanges && aAssociatedBindingInfo.NewPath.Equals(aCurrentBindingInfo.NewPath) == false) {
-                GUILayout.Label("already has different pending changes!", EditorStyles.miniLabel);
-            } else if (aAssociatedBindingInfo.ClipInfo.ContainsBinding(aCurrentBindingInfo.NewPath)) {
+                GUILayout.Label("already has a different pending change!", EditorStyles.miniLabel);
+            } else if (aAssociatedBindingInfo.ClipInfo.ContainsBinding(aCurrentBindingInfo.NewPath, aAssociatedBindingInfo)) {
                 GUILayout.Label("already has that binding or has it as a pending change!", EditorStyles.miniLabel);
             } else {
                 bool set = GUILayout.Toggle(aAssociatedBindingInfo.HasPendingChanges, string.Empty);
@@ -548,7 +567,7 @@ namespace Resource.Editor {
                 if (aObjectReference.transform.parent != null) {
                     return GetPath(aObjectReference.transform.parent.gameObject, true) + aObjectReference.name + (aSeparatePath ? "/" : string.Empty);
                 } else {
-                    throw new UnityException(string.Format("Object must belong to animator '{0}'!", animator));
+                    throw new UnityException(string.Format("[AnimationRemapper] Selected GameObject must belong to the active animator '{0}'!", animator));
                 }
             } else {
                 return string.Empty;
