@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <LangVersion>4</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <RootNamespace></RootNamespace>
+    <ProjectGuid>{B5DE9CC6-FECE-28C6-6DE3-008B0804F0A7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_6_OR_NEWER;UNITY_2017_1_OR_NEWER;UNITY_2017_1_0;UNITY_2017_1;UNITY_2017;PLATFORM_ARCH_64;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_PVR_GI;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_RUNTIME_NAVMESH_BUILDING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_DIRECTOR;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_COLLAB_SOFTLOCKS;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_USE_WEBREQUEST;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_WEBSOCKET_CLIENT;ENABLE_DIRECTOR_AUDIO;ENABLE_TIMELINE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;ENABLE_NATIVE_ARRAY;ENABLE_SPRITE_MASKING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;ENABLE_MONO_BDWGC;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_VIDEO;ENABLE_RMGUI;ENABLE_CUSTOM_RENDER_TEXTURE;ENABLE_STYLE_SHEETS;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;NET_2_0_SUBSET;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;ENABLE_NATIVE_ARRAY_CHECKS;UNITY_TEAM_LICENSE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Temp\bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/Managed/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Extensions\Attributes\AssetPathAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\AxesConstraintAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\EnumFlagsAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\LimitedRangeAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\LimitedVector2Attribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\LimitedVector3Attribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\MaxAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\MinAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\ReadOnlyAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\SortingLayerAttribute.cs" />
+     <Compile Include="Assets\Extensions\Attributes\VisbilityAttribute.cs" />
+     <Compile Include="Assets\Extensions\Audio\AudioElement.cs" />
+     <Compile Include="Assets\Extensions\Audio\AudioManager.cs" />
+     <Compile Include="Assets\Extensions\Camera\Camera2D.cs" />
+     <Compile Include="Assets\Extensions\Camera\CameraOrthographicProjection.cs" />
+     <Compile Include="Assets\Extensions\Curves\Bezier.cs" />
+     <Compile Include="Assets\Extensions\Curves\BezierEnums.cs" />
+     <Compile Include="Assets\Extensions\Curves\BezierPoint.cs" />
+     <Compile Include="Assets\Extensions\Curves\BezierSpline.cs" />
+     <Compile Include="Assets\Extensions\Curves\SplineTraveler.cs" />
+     <Compile Include="Assets\Extensions\Ext\ActionEvent.cs" />
+     <Compile Include="Assets\Extensions\Ext\AudioClipExtended.cs" />
+     <Compile Include="Assets\Extensions\Ext\Floater.cs" />
+     <Compile Include="Assets\Extensions\Ext\ObjectFollow.cs" />
+     <Compile Include="Assets\Extensions\Ext\ObjectShake.cs" />
+     <Compile Include="Assets\Extensions\Ext\Reflection.cs" />
+     <Compile Include="Assets\Extensions\Ext\SortingOrderOverride.cs" />
+     <Compile Include="Assets\Extensions\Ext\SpriteStates.cs" />
+     <Compile Include="Assets\Extensions\File Management\FileManager.cs" />
+     <Compile Include="Assets\Extensions\File Management\IFile.cs" />
+     <Compile Include="Assets\Extensions\Internet\ConnectingUI.cs" />
+     <Compile Include="Assets\Extensions\Internet\ConnectivityResult.cs" />
+     <Compile Include="Assets\Extensions\Internet\IConnectivityResult.cs" />
+     <Compile Include="Assets\Extensions\Internet\InternetConnectivityManager.cs" />
+     <Compile Include="Assets\Extensions\Loading\LoadingManager.cs" />
+     <Compile Include="Assets\Extensions\Loading\SceneContainer.cs" />
+     <Compile Include="Assets\Extensions\Math\Fibonnaci.cs" />
+     <Compile Include="Assets\Extensions\Objects\Collections\Heap.cs" />
+     <Compile Include="Assets\Extensions\Objects\Collections\MultiDictionary.cs" />
+     <Compile Include="Assets\Extensions\Objects\Collections\TwoWayDictionary.cs" />
+     <Compile Include="Assets\Extensions\Objects\FiniteSingleton.cs" />
+     <Compile Include="Assets\Extensions\Objects\Singleton.cs" />
+     <Compile Include="Assets\Extensions\Objects\State Machines\State.cs" />
+     <Compile Include="Assets\Extensions\Objects\State Machines\StateMachine.cs" />
+     <Compile Include="Assets\Extensions\Plugins\AdManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\AnalyticsManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\FacebookManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\InAppPurchaseManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\PlayFabManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\PushNotificationManager.cs" />
+     <Compile Include="Assets\Extensions\Plugins\Social Network\Editor Network\EditorSocialPlatform.cs" />
+     <Compile Include="Assets\Extensions\Plugins\Social Network\Editor Network\EditorSocialUser.cs" />
+     <Compile Include="Assets\Extensions\Plugins\Social Network\SocialManager.cs" />
+     <Compile Include="Assets\Extensions\Pooling\ObjectPool.cs" />
+     <Compile Include="Assets\Extensions\Pooling\ObjectPoolManager.cs" />
+     <Compile Include="Assets\Extensions\Pooling\Pool.cs" />
+     <Compile Include="Assets\Extensions\Pooling\PoolableObject.cs" />
+     <Compile Include="Assets\Extensions\Rewards\RewardElement.cs" />
+     <Compile Include="Assets\Extensions\Rewards\RewardsManager.cs" />
+     <Compile Include="Assets\Extensions\Touch\PinchZoom.cs" />
+     <Compile Include="Assets\Extensions\Touch\PinchZoomUI.cs" />
+     <Compile Include="Assets\Extensions\Touch\TouchSimulator.cs" />
+     <Compile Include="Assets\Extensions\UI\CurvedText\CurvedText.cs" />
+     <Compile Include="Assets\Extensions\UI\EditorCameraMovement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\AnimatedTextElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\BarElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\CooldownElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\CursorElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\FadeElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\ImageElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\MagneticCursorElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\PopupElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\ProcessingElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Elements\TextElement.cs" />
+     <Compile Include="Assets\Extensions\UI\Gizmos\Gizmo.cs" />
+     <Compile Include="Assets\Extensions\UI\Gizmos\PositionGizmo.cs" />
+     <Compile Include="Assets\Extensions\UI\Gizmos\RotationGizmo.cs" />
+     <Compile Include="Assets\Extensions\UI\Gizmos\ScaleGizmo.cs" />
+     <Compile Include="Assets\Extensions\UI\ScrollSnapRect.cs" />
+     <Compile Include="Assets\Extensions\Utils\CameraUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\CollectionUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\DebugUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\EnumUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\InterfaceUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\JsonUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\MathUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\MecanimUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\StringUtils.cs" />
+     <Compile Include="Assets\Extensions\Utils\VectorUtils.cs" />
+     <Compile Include="Assets\test.cs" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Networking">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.TestRunner">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.framework">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Timeline">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.HoloLens">
+ <HintPath>C:/Program Files/Unity-2017.1/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Extensions {
 
     public class AudioManager : Singleton<AudioManager> {
-        [SerializeField]
+        [SerializeField, Tooltip("Tracks to load at start of application")]
         private AudioClip[] tracks;
 
         private Dictionary<string, AudioClip> clips;
@@ -16,8 +16,8 @@ namespace Extensions {
         private float soundEffectsVolume = 1;
 
         #region Consts
-        public const string BackgroundMusicID = "BackgroundMusic";
-        public const string DefaultSoundEffectID = "DefaultSFX";
+        public const string DefaultMusicSourceID = "DefaultBackgroundMusic";
+        public const string DefaultSoundEffectSourceID = "DefaultSoundEffect";
         #endregion
 
         #region Getters & Setters
@@ -25,8 +25,8 @@ namespace Extensions {
         public float MusicVolume {
             get { return musicVolume; }
             set {
-                musicVolume = value;
-                sources[BackgroundMusicID].volume = value;
+                musicVolume = Mathf.Clamp01(value);
+                sources[DefaultMusicSourceID].volume = musicVolume;
             }
         }
 
@@ -34,8 +34,8 @@ namespace Extensions {
         public float SoundEffectsVolume {
             get { return soundEffectsVolume; }
             set {
-                soundEffectsVolume = value;
-                sources[DefaultSoundEffectID].volume = value;
+                soundEffectsVolume = Mathf.Clamp01(value);
+                sources[DefaultSoundEffectSourceID].volume = soundEffectsVolume;
             }
         }
         #endregion
@@ -49,10 +49,10 @@ namespace Extensions {
                 }
 
                 sources = new Dictionary<string, AudioSource>();
-                sources[BackgroundMusicID] = gameObject.AddComponent<AudioSource>();
-                sources[BackgroundMusicID].loop = true;
+                sources[DefaultMusicSourceID] = gameObject.AddComponent<AudioSource>();
+                sources[DefaultMusicSourceID].loop = true;
 
-                sources[DefaultSoundEffectID] = gameObject.AddComponent<AudioSource>();
+                sources[DefaultSoundEffectSourceID] = gameObject.AddComponent<AudioSource>();
 
                 MusicVolume = aMusicVolume;
                 SoundEffectsVolume = aSoundEffectsVolume;
@@ -80,33 +80,57 @@ namespace Extensions {
 
             return source;
         }
+
+        /// <summary>
+        /// Load an audio source based on the provided ID
+        /// </summary>
+        /// <param name="aSourceID">ID of the source to load</param>
+        /// <param name="aLoadedSource">Loaded audio source</param>
+        /// <param name="aCreate">If true an audio source with ID will be created</param>
+        /// <returns>Returns true if the audio source was loaded</returns>
+        public bool LoadAudioSource(string aSourceID, out AudioSource aLoadedSource, bool aCreate = false) {
+            aLoadedSource = null;
+
+            if (sources.TryGetValue(aSourceID, out aLoadedSource) == false) {
+                if (aCreate) {
+                    aLoadedSource = gameObject.AddComponent<AudioSource>();
+                    sources[aSourceID] = aLoadedSource;
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+        }
         #endregion
 
         #region Music Management
-        public void PlayMusic(string aClipID, string aAudioSourceID = BackgroundMusicID) {
+        public void PlayMusic(string aClipID, string aSourceID = DefaultMusicSourceID, bool aCreateSource = false) {
             AudioClip clip = null;
             if (clips.TryGetValue(aClipID, out clip)) {
-                PlayMusic(clip, aAudioSourceID);
+                PlayMusic(clip, aSourceID, aCreateSource);
             } else {
                 Debug.LogWarning("[AudioManager] No clip by id \"" + aClipID + "\" was found among the manager's list of available tracks!");
             }
         }
 
-        public void PlayMusic(AudioClip aClip, string aAudioSourceID = BackgroundMusicID) {
-            AudioSource source = sources[aAudioSourceID];
+        public void PlayMusic(AudioClip aClip, string aSourceID = DefaultMusicSourceID, bool aCreateSource = false) {
+            AudioSource source = LoadAudioSource(aSourceID, aCreateSource);
 
             // Play previously loaded track
-            if (source.clip != null && source.clip.name == aClip.name) {
-                if (source.isPlaying == false) {
-                    source.Play();
+            if (source != null) {
+                if (source.clip != null && source.clip.name == aClip.name) {
+                    if (source.isPlaying == false) {
+                        source.Play();
+                    }
+
+                    return;
                 }
 
-                return;
+                source.volume = musicVolume;
+                source.clip = aClip;
+                source.Play();
             }
-
-            source.volume = musicVolume;
-            source.clip = aClip;
-            source.Play();
         }
         #endregion
 
@@ -136,9 +160,9 @@ namespace Extensions {
             }
 
             if (aVolume >= 0) {
-                sources[DefaultSoundEffectID].PlayOneShot(aClip, aVolume * soundEffectsVolume);
+                sources[DefaultSoundEffectSourceID].PlayOneShot(aClip, aVolume * soundEffectsVolume);
             } else {
-                sources[DefaultSoundEffectID].PlayOneShot(aClip, soundEffectsVolume);
+                sources[DefaultSoundEffectSourceID].PlayOneShot(aClip, soundEffectsVolume);
             }
         }
 
@@ -245,49 +269,88 @@ namespace Extensions {
         }
         #endregion
 
-        #region Utilities
+        #region Fades
         /// <summary>
         /// Fade in new music whlie fading out current music
         /// </summary>
-        public void Crossfade() {
-            // TODO: FILL IN
+        /// <param name="aOutgoingSourceID">ID for the audio source to fade out</param>
+        /// <param name="aIncomingSourceID">ID for the audio source to fade in</param>
+        /// <param name="aDuration">Duration of the fade</param>
+        /// <param name="aCreateSources">Enforce creation of audio sources if they don't exist</param>
+        public void Crossfade(string aOutgoingSourceID, string aIncomingSourceID, float aDuration, bool aCreateSources = false) {
+            Crossfade(LoadAudioSource(aOutgoingSourceID, aCreateSources), LoadAudioSource(aIncomingSourceID, aCreateSources), aDuration);
+        }
+
+        /// <summary>
+        /// Fade in new music whlie fading out current music
+        /// </summary>
+        /// <param name="aOutgoingSource">Audio source to fade out</param>
+        /// <param name="aIncomingSource">Audio source to fade in</param>
+        /// <param name="aDuration">Duration of the fade</param>
+        public void Crossfade(AudioSource aOutgoingSource, AudioSource aIncomingSource, float aDuration) {
+            FadeOut(aOutgoingSource, aDuration);
+            FadeIn(aIncomingSource, aDuration);
         }
 
         /// <summary>
         /// Fade in the provided audio source (by ID)
         /// </summary>
         /// <param name="aSourceID">ID for the audio source</param>
-        /// <param name="aFadeDuration">Duration of the fade</param>
-        public void FadeIn(string aSourceID, float aFadeDuration = 1.0f) {
-            StartCoroutine(ProcessFade(aSourceID, 1.0f, aFadeDuration));
+        /// <param name="aDuration">Duration of the fade</param>
+        public void FadeIn(string aSourceID, float aDuration = 1.0f) {
+            FadeIn(LoadAudioSource(aSourceID), aDuration);
+        }
+
+        /// <summary>
+        /// Fade in the provided audio source (by ID)
+        /// </summary>
+        /// <param name="aSource">Audio source to fade in</param>
+        /// <param name="aDuration">Duration of the fade</param>
+        public void FadeIn(AudioSource aSource, float aDuration = 1.0f) {
+            StartCoroutine(ProcessFade(aSource, 1.0f, aDuration));
         }
 
         /// <summary>
         /// Fade out the provided audio source (by ID)
         /// </summary>
         /// <param name="aSourceID">ID for the audio source</param>
-        /// <param name="aFadeDuration">Duration of the fade</param>
-        public void FadeOut(string aSourceID, float aFadeDuration = 1.0f) {
-            StartCoroutine(ProcessFade(aSourceID, 0.0f, aFadeDuration));
+        /// <param name="aDuration">Duration of the fade</param>
+        public void FadeOut(string aSourceID, float aDuration = 1.0f) {
+            FadeOut(LoadAudioSource(aSourceID), aDuration);
         }
 
-        private IEnumerator ProcessFade(string aSourceID, float aFinal, float aDuration) {
-            float time = 0.0f;
+        /// <summary>
+        /// Fade out the provided audio source (by ID)
+        /// </summary>
+        /// <param name="aSource">Audio source to fade out</param>
+        /// <param name="aDuration">Duration of the fade</param>
+        public void FadeOut(AudioSource aSource, float aDuration = 1.0f) {
+            StartCoroutine(ProcessFade(aSource, 0.0f, aDuration));
+        }
 
-            AudioSource source;
-            if (sources.TryGetValue(aSourceID, out source)) {
-                float start = source.volume;
+        private IEnumerator ProcessFade(AudioSource aSource, float aFinal, float aDuration) {
+            if (aSource != null) {
+                float time = 0.0f;
+
+                // Ensure the source is playing before fading in/out
+                if (aSource.isPlaying == false) {
+                    aSource.Play();
+                }
+
+                float start = aSource.volume;
 
                 do {
                     time += (Time.deltaTime / aDuration);
 
-                    source.volume = Mathf.Lerp(start, aFinal, time);
+                    aSource.volume = Mathf.Lerp(start, aFinal, time);
 
                     yield return null;
                 } while (time < 1.0f);
             }
         }
+        #endregion
 
+        #region Utilities
         /// <summary>
         /// Mute/Un-mute audio sources, if no source ID is provided all sources will be muted
         /// </summary>

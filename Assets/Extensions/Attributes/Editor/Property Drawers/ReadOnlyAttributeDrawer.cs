@@ -14,6 +14,12 @@ namespace Extensions.Properties {
         }
         #endregion
 
+        #region Utilities
+        public override float GetPropertyHeight(SerializedProperty aProperty, GUIContent aLabel) {
+            return EditorGUI.GetPropertyHeight(aProperty, aLabel);
+        }
+        #endregion
+
     }
 
 }
