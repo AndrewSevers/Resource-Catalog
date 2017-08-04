@@ -91,7 +91,7 @@ namespace Extensions {
                 loadingData.AppendData(aLoadingData);
             }
 
-            // Ensure loading can progress if the game is completely paused
+            // Ensure loading can progress if the game is completely frozen
             if (Time.timeScale == 0) {
                 Time.timeScale = 1;
             }
@@ -233,7 +233,7 @@ namespace Extensions {
             return data;
         }
 
-        public T GetLoadingData<T>(string aSceneName, LoadingDataType aKey) {
+        public T GetLoadingData<T>(string aSceneName, string aKey) {
             LoadingOperation operation = null;
             loadingOperations.TryGetValue(aSceneName, out operation);
 
@@ -257,7 +257,7 @@ namespace Extensions {
     #region Loading Operation Class
     public class LoadingOperation {
         private AsyncOperation operation = null;
-        private Dictionary<LoadingDataType, object> data;
+        private Dictionary<string, object> data;
 
         #region Getters & setters
         public AsyncOperation Operation {
@@ -268,16 +268,16 @@ namespace Extensions {
 
         #region Constructor
         public LoadingOperation() {
-            data = new Dictionary<LoadingDataType, object>();
+            data = new Dictionary<string, object>();
         }
 
-        public LoadingOperation(Dictionary<LoadingDataType, object> aData) {
-            data = (aData != null) ? aData : new Dictionary<LoadingDataType, object>();
+        public LoadingOperation(Dictionary<string, object> aData) {
+            data = (aData != null) ? aData : new Dictionary<string, object>();
         }
 
-        public LoadingOperation(AsyncOperation aOperation, Dictionary<LoadingDataType, object> aData = null) {
+        public LoadingOperation(AsyncOperation aOperation, Dictionary<string, object> aData = null) {
             operation = aOperation;
-            data = (aData != null) ? aData : new Dictionary<LoadingDataType, object>();
+            data = (aData != null) ? aData : new Dictionary<string, object>();
         }
         #endregion
 
@@ -292,7 +292,7 @@ namespace Extensions {
             }
         }
 
-        public T GetDataValue<T>(LoadingDataType aKey) {
+        public T GetDataValue<T>(string aKey) {
             object value = null;
             data.TryGetValue(aKey, out value);
             return (T) value;
@@ -303,11 +303,11 @@ namespace Extensions {
 
     #region Loading Data Class
     public class LoadingData {
-        private LoadingDataType key;
+        private string key;
         private object value;
 
         #region Getters & Setters
-        public LoadingDataType Key {
+        public string Key {
             get { return key; }
         }
 
@@ -317,18 +317,12 @@ namespace Extensions {
         #endregion
 
         #region Constructor
-        public LoadingData(LoadingDataType aKey, object aValue) {
+        public LoadingData(string aKey, object aValue) {
             key = aKey;
             value = aValue;
         }
         #endregion
     }
     #endregion
-
-    public enum LoadingDataType {
-        Menu,
-        Cinematic,
-        Level
-    }
 
 }

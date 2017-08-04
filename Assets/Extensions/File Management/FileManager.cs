@@ -37,6 +37,8 @@ namespace Extensions {
         #endregion
 
         #region Loading
+        /// <summary>Load a file at the provided file path</summary>
+        /// <param name="aFilePath">Path of the file to load</param>
         public static T Load<T>(string aFilePath) {
             object data = Load(aFilePath);
             return (data != null) ? (T) data : default(T);

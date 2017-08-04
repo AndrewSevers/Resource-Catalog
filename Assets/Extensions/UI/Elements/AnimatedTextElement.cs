@@ -53,32 +53,12 @@ namespace Extensions.UI {
             animator.SetTrigger("Updated");
 		}
 
-		/// <summary>
-		/// Overwrite the current text field with a new value
-		/// </summary>
-		/// <param name="aText">New text value</param>
-		public override void OverwriteText(string aText) {
-            base.OverwriteText(aText);
-            animator.SetTrigger("Overwritten");
-		}
-
-		/// <summary>
-		/// Overwrite the current text field with the provided formatted text
-		/// </summary>
-		/// <param name="aFormatText">Format of displayed text</param>
-		/// <param name="aValue">Int value to place into the formatted text</param>
-		public override void OverwriteText(string aFormatText, int aValue) {
-            base.OverwriteText(aFormatText, aValue);
-            animator.SetTrigger("Overwritten");
-		}
-
-		/// <summary>
-		/// Overwrite the current text field with the provided formatted text
-		/// </summary>
-		/// <param name="aFormatText">Format of displayed text</param>
-		/// <param name="aValue">Float value to place into the formatted text</param>
-		public override void OverwriteText(string aFormatText, float aValue) {
-            base.OverwriteText(aFormatText, aValue);
+        /// <summary>
+        /// Overwrite the existing format with the one provided
+        /// </summary>
+        /// <param name="aFormat">Format to set</param>
+		public override void SetFormat(string aFormat) {
+            base.SetFormat(aFormat);
             animator.SetTrigger("Overwritten");
 		}
 		#endregion

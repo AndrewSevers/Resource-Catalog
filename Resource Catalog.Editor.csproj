@@ -147,7 +147,6 @@
     <Compile Include="Assets\Extensions\Editor\uGUITools.cs" />
     <Compile Include="Assets\Extensions\Objects\State Machines\Editor\StateEditor.cs" />
     <Compile Include="Assets\Extensions\Objects\State Machines\Editor\StateMachineEditor.cs" />
-    <Compile Include="Assets\Extensions\UI\CurvedText\Editor\CurveTextInspector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

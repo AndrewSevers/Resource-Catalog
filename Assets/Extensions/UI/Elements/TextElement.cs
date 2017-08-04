@@ -5,18 +5,12 @@ using UnityEngine.UI;
 namespace Extensions.UI {
 
     public class TextElement : MonoBehaviour {
-        [SerializeField]
-        private bool useExternalText = false;
-        [SerializeField, Visibility("useExternalText", true)]
+        [SerializeField, Tooltip("Format to use when updating the text field")]
+		private string format;
+
         private Text field;
-        [SerializeField, Tooltip("Default format to use when updating the text field")]
-		private string defaultFormat;
 
         #region Getters & Setters
-        public bool UseExternalText {
-            get { return useExternalText; }
-        }
-
         public string Text {
 			get { return field.text; }
 		}
@@ -28,9 +22,7 @@ namespace Extensions.UI {
 		}
 
 		public virtual void Initialize() {
-            if (useExternalText == false) {
-                field = GetComponent<Text>();
-            }
+            field = GetComponent<Text>();
         }
         #endregion
 
@@ -40,7 +32,7 @@ namespace Extensions.UI {
         /// </summary>
         /// <param name="aArg">New text value</param>
         public virtual void UpdateText(object aArg) {
-			field.text = string.Format(defaultFormat, aArg);
+			field.text = string.Format(format, aArg);
 		}
 
         /// <summary>
@@ -49,7 +41,7 @@ namespace Extensions.UI {
         /// <param name="aArg1">New text value</param>
         /// <param name="aArg1">New text value</param>
         public virtual void UpdateText(object aArg1, object aArg2) {
-            field.text = string.Format(defaultFormat, aArg1, aArg2);
+            field.text = string.Format(format, aArg1, aArg2);
         }
 
         /// <summary>
@@ -57,34 +49,23 @@ namespace Extensions.UI {
         /// </summary>
         /// <param name="aArgs">New text value</param>
         public virtual void UpdateText(params object[] aArgs) {
-            field.text = string.Format(defaultFormat, aArgs);
+            field.text = string.Format(format, aArgs);
         }
 
         /// <summary>
-        /// Overwrite the current text field with a new value
+        /// Overwrite the existing format with the one provided
         /// </summary>
-        /// <param name="aText">New text value</param>
-        public virtual void OverwriteText(string aText) {
-			field.text = aText;
+        /// <param name="aFormat">Format to set</param>
+        public virtual void SetFormat(string aFormat) {
+			format = aFormat;
 		}
 
-		/// <summary>
-		/// Overwrite the current text field with the provided formatted text
-		/// </summary>
-		/// <param name="aFormatText">Format of displayed text</param>
-		/// <param name="aValue">Int value to place into the formatted text</param>
-		public virtual void OverwriteText(string aFormatText, int aValue) {
-			field.text = string.Format(aFormatText, aValue);
-		}
-
-		/// <summary>
-		/// Overwrite the current text field with the provided formatted text
-		/// </summary>
-		/// <param name="aFormatText">Format of displayed text</param>
-		/// <param name="aValue">Float value to place into the formatted text</param>
-		public virtual void OverwriteText(string aFormatText, float aValue) {
-			field.text = string.Format(aFormatText, aValue);
-		}
+        /// <summary>
+        /// Clear the format so it is blank
+        /// </summary>
+        public virtual void ClearFormat() {
+            format = string.Empty;
+        }
 		#endregion
 
 	}

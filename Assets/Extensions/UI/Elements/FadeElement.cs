@@ -222,12 +222,16 @@ namespace Extensions.UI {
             }
         }
 
-        public void FadeInstantly(float aFadeGoal) {
+        /// <summary>
+        /// Instantly set the fade of the object to the provided value
+        /// </summary>
+        /// <param name="aFadeValue">Value to set the alpha channel of the fade element</param>
+        public void FadeInstantly(float aFadeValue) {
             if (gameObject.activeSelf == false) {
                 gameObject.SetActive(true);
             }
 
-            canvasGroup.alpha = aFadeGoal;
+            canvasGroup.alpha = aFadeValue;
         }
         #endregion
 

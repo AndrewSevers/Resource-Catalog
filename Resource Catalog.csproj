@@ -137,15 +137,11 @@
     <Compile Include="Assets\Extensions\Pooling\PoolableObject.cs" />
     <Compile Include="Assets\Extensions\Rewards\RewardElement.cs" />
     <Compile Include="Assets\Extensions\Rewards\RewardsManager.cs" />
-    <Compile Include="Assets\Extensions\Touch\PinchZoom.cs" />
-    <Compile Include="Assets\Extensions\Touch\PinchZoomUI.cs" />
     <Compile Include="Assets\Extensions\Touch\TouchSimulator.cs" />
-    <Compile Include="Assets\Extensions\UI\CurvedText\CurvedText.cs" />
     <Compile Include="Assets\Extensions\UI\EditorCameraMovement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\AnimatedTextElement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\BarElement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\CooldownElement.cs" />
-    <Compile Include="Assets\Extensions\UI\Elements\CursorElement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\FadeElement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\ImageElement.cs" />
     <Compile Include="Assets\Extensions\UI\Elements\MagneticCursorElement.cs" />
@@ -156,7 +152,6 @@
     <Compile Include="Assets\Extensions\UI\Gizmos\PositionGizmo.cs" />
     <Compile Include="Assets\Extensions\UI\Gizmos\RotationGizmo.cs" />
     <Compile Include="Assets\Extensions\UI\Gizmos\ScaleGizmo.cs" />
-    <Compile Include="Assets\Extensions\UI\ScrollSnapRect.cs" />
     <Compile Include="Assets\Extensions\Utils\CameraUtils.cs" />
     <Compile Include="Assets\Extensions\Utils\CollectionUtils.cs" />
     <Compile Include="Assets\Extensions\Utils\DebugUtils.cs" />
