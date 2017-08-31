@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using Extensions.Properties;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class test : MonoBehaviour {
+    public List<LimitedRange> ranges;
 
 	// Use this for initialization
 	void Start () {

@@ -39,6 +39,7 @@ namespace Extensions {
         #region Loading
         /// <summary>Load a file at the provided file path</summary>
         /// <param name="aFilePath">Path of the file to load</param>
+        /// <returns>Casted object of type provided in calling function</returns>
         public static T Load<T>(string aFilePath) {
             object data = Load(aFilePath);
             return (data != null) ? (T) data : default(T);
@@ -46,6 +47,7 @@ namespace Extensions {
 
         /// <summary>Load a file at the provided file path</summary>
         /// <param name="aFilePath">Path of the file to load</param>
+        /// <returns>Generic un-casted object</returns>
         public static object Load(string aFilePath) {
             object data = null;
             

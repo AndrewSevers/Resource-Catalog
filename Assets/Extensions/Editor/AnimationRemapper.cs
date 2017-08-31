@@ -309,6 +309,7 @@ namespace Resource.Editor {
 
             GUI.enabled = aBindingInfo.HasPendingChanges;
 
+            // Draw apply button
             if (GUILayout.Button("Apply", EditorStyles.miniButtonLeft)) {
                 // Setup list of bindings to update base on the curently selected one as well as the current one's associated bindings
                 List<EditorBindingInfo> bindings = new List<EditorBindingInfo>() { aBindingInfo };
@@ -321,18 +322,18 @@ namespace Resource.Editor {
                 ApplyPendingChanges(bindings.ToArray());
             }
 
+            // Draw clear changes button
             if (GUILayout.Button("Clear", EditorStyles.miniButtonMid)) {
                 ClearPendingChanges(aBindingInfo);
             }
 
-            if (aBindingInfo.AssociatedBindings.Count > 0) {
-                GUI.enabled = true;
-            }
+            GUI.enabled = (aBindingInfo.AssociatedBindings.Count > 0);
 
             // Diplay the show associated bindings button
             string arrowUnicode = (aBindingInfo.ShowAssociatedBindings) ? upArrowUnicode : downArrowUnicode;
             GUIContent expandContent = new GUIContent(arrowUnicode, "Expand to show associated bindings among the other animation clips on this animator");
 
+            // Draw show associated bindings
             if (GUILayout.Button(expandContent, EditorStyles.miniButtonRight)) {
                 aBindingInfo.ShowAssociatedBindings = !aBindingInfo.ShowAssociatedBindings;
             }
