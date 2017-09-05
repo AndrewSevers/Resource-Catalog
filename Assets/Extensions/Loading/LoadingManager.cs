@@ -1,5 +1,6 @@
 using Extensions.Properties;
 using Extensions.UI;
+using Extensions.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -77,18 +78,19 @@ namespace Extensions {
 
         /// <summary>Load the given level</summary>
         /// <param name="aSceneName">Scene to load</param>
-        public void LoadScene(string aSceneName, params LoadingData[] aLoadingData) {
+        /// <param name="aLoadingData">An amount of key/value pairs to pass to the next scene</param>
+        public void LoadScene(string aSceneName, params KeyValue[] aLoadingData) {
             loading = true;
 
             // Setup loading data if provided
-            LoadingOperation loadingData = null;
-            if (loadingOperations.TryGetValue(aSceneName, out loadingData) == false) {
-                loadingData = new LoadingOperation();
-                loadingOperations[aSceneName] = loadingData;
+            LoadingOperation loadingOperation = null;
+            if (loadingOperations.TryGetValue(aSceneName, out loadingOperation) == false) {
+                loadingOperation = new LoadingOperation();
+                loadingOperations[aSceneName] = loadingOperation;
             }
 
             if (aLoadingData != null) {
-                loadingData.AppendData(aLoadingData);
+                loadingOperation.SetData(aLoadingData);
             }
 
             // Ensure loading can progress if the game is completely frozen
@@ -98,13 +100,13 @@ namespace Extensions {
 
             // Reloading scene clear previous operation
             if (ActiveScene.name == aSceneName) {
-                loadingData.Operation = null;
+                loadingOperation.Operation = null;
             }
 
-            StartCoroutine(ProcessLoadingScene(aSceneName, loadingData));
+            StartCoroutine(ProcessLoadingScene(aSceneName, loadingOperation));
         }
 
-        private IEnumerator ProcessLoadingScene(string aSceneName, LoadingOperation aLoadingData) {
+        private IEnumerator ProcessLoadingScene(string aSceneName, LoadingOperation aLoadingOperation) {
             yield return WaitForTransition(true);
 
             // Display loading scene
@@ -127,14 +129,14 @@ namespace Extensions {
             yield return SceneManager.UnloadSceneAsync(ActiveScene);
 
             // If we didn't preload the scene then load it now
-            if (aLoadingData.Operation == null) {
-                aLoadingData.Operation = SceneManager.LoadSceneAsync(aSceneName, LoadSceneMode.Additive);
+            if (aLoadingOperation.Operation == null) {
+                aLoadingOperation.Operation = SceneManager.LoadSceneAsync(aSceneName, LoadSceneMode.Additive);
             }
 
             float elapsedTime = Time.time;
 
             // Wait for the scene to complete loading
-            while (aLoadingData.Operation.isDone == false) {
+            while (aLoadingOperation.Operation.isDone == false) {
                 yield return null;
             }
 
@@ -267,59 +269,22 @@ namespace Extensions {
         #endregion
 
         #region Constructor
-        public LoadingOperation() {
-            data = new Dictionary<string, object>();
-        }
+        public LoadingOperation() { }
 
-        public LoadingOperation(Dictionary<string, object> aData) {
-            data = (aData != null) ? aData : new Dictionary<string, object>();
-        }
-
-        public LoadingOperation(AsyncOperation aOperation, Dictionary<string, object> aData = null) {
+        public LoadingOperation(AsyncOperation aOperation) {
             operation = aOperation;
-            data = (aData != null) ? aData : new Dictionary<string, object>();
         }
         #endregion
 
         #region Utility Function
-        public void AddData(LoadingData aData) {
-            data[aData.Key] = aData.Value;
-        }
-
-        public void AppendData(params LoadingData[] aData) {
-            foreach (LoadingData incomingData in aData) {
-                data[incomingData.Key] = incomingData.Value;
-            }
+        public void SetData(KeyValue[] aLoadingData) {
+            data = CollectionUtils.ToDictionary(aLoadingData);
         }
 
         public T GetDataValue<T>(string aKey) {
             object value = null;
             data.TryGetValue(aKey, out value);
             return (T) value;
-        }
-        #endregion
-    }
-    #endregion
-
-    #region Loading Data Class
-    public class LoadingData {
-        private string key;
-        private object value;
-
-        #region Getters & Setters
-        public string Key {
-            get { return key; }
-        }
-
-        public object Value {
-            get { return value; }
-        }
-        #endregion
-
-        #region Constructor
-        public LoadingData(string aKey, object aValue) {
-            key = aKey;
-            value = aValue;
         }
         #endregion
     }

@@ -92,7 +92,6 @@
     <Compile Include="Assets\Extensions\Audio\AudioElement.cs" />
     <Compile Include="Assets\Extensions\Audio\AudioManager.cs" />
     <Compile Include="Assets\Extensions\Camera\Camera2D.cs" />
-    <Compile Include="Assets\Extensions\Camera\CameraOrthographicProjection.cs" />
     <Compile Include="Assets\Extensions\Curves\Bezier.cs" />
     <Compile Include="Assets\Extensions\Curves\BezierEnums.cs" />
     <Compile Include="Assets\Extensions\Curves\BezierPoint.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="Assets\Extensions\Curves\SplineTraveler.cs" />
     <Compile Include="Assets\Extensions\Ext\ActionEvent.cs" />
     <Compile Include="Assets\Extensions\Ext\AudioClipExtended.cs" />
-    <Compile Include="Assets\Extensions\Ext\Floater.cs" />
     <Compile Include="Assets\Extensions\Ext\ObjectFollow.cs" />
     <Compile Include="Assets\Extensions\Ext\ObjectShake.cs" />
     <Compile Include="Assets\Extensions\Ext\Reflection.cs" />
@@ -118,7 +116,12 @@
     <Compile Include="Assets\Extensions\Objects\Collections\Heap.cs" />
     <Compile Include="Assets\Extensions\Objects\Collections\MultiDictionary.cs" />
     <Compile Include="Assets\Extensions\Objects\Collections\TwoWayDictionary.cs" />
+    <Compile Include="Assets\Extensions\Objects\Data Model\KeyValue.cs" />
     <Compile Include="Assets\Extensions\Objects\FiniteSingleton.cs" />
+    <Compile Include="Assets\Extensions\Objects\Pooling\ObjectPool.cs" />
+    <Compile Include="Assets\Extensions\Objects\Pooling\ObjectPoolManager.cs" />
+    <Compile Include="Assets\Extensions\Objects\Pooling\Pool.cs" />
+    <Compile Include="Assets\Extensions\Objects\Pooling\PoolableObject.cs" />
     <Compile Include="Assets\Extensions\Objects\Singleton.cs" />
     <Compile Include="Assets\Extensions\Objects\State Machines\State.cs" />
     <Compile Include="Assets\Extensions\Objects\State Machines\StateMachine.cs" />
@@ -131,10 +134,6 @@
     <Compile Include="Assets\Extensions\Plugins\Social Network\Editor Network\EditorSocialPlatform.cs" />
     <Compile Include="Assets\Extensions\Plugins\Social Network\Editor Network\EditorSocialUser.cs" />
     <Compile Include="Assets\Extensions\Plugins\Social Network\SocialManager.cs" />
-    <Compile Include="Assets\Extensions\Pooling\ObjectPool.cs" />
-    <Compile Include="Assets\Extensions\Pooling\ObjectPoolManager.cs" />
-    <Compile Include="Assets\Extensions\Pooling\Pool.cs" />
-    <Compile Include="Assets\Extensions\Pooling\PoolableObject.cs" />
     <Compile Include="Assets\Extensions\Rewards\RewardElement.cs" />
     <Compile Include="Assets\Extensions\Rewards\RewardsManager.cs" />
     <Compile Include="Assets\Extensions\Touch\TouchSimulator.cs" />

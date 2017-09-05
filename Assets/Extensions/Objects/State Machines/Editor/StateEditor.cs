@@ -3,7 +3,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Extensions.States;
-using Extensions.Utils;
 
 namespace Extensions.Editor {
 

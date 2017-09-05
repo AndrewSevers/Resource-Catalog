@@ -25,6 +25,10 @@ namespace Extensions.States {
         #region Initialization
         // Initialize all states. Enable and start executing the current state (chosen in the inspector).
         void Start() {
+            Initialize();
+        }
+
+        private void Initialize() {
             if (states != null) {
                 foreach (State state in states) {
                     if (state != null) {
@@ -35,16 +39,18 @@ namespace Extensions.States {
                 if (currentState != null) {
                     currentState.Enable();
                 } else {
-                    Debug.LogWarning(string.Format("StatMachine: {0} does not have a current state. Please set it in the editor!", this));
+                    Debug.LogError(string.Format("StatMachine: {0} does not have a current state. Please set it in the editor!", this));
                 }
             }
         }
         #endregion
 
         #region Update Functions
-        void Update() {
-            if (currentState != null && changingState == false) {
+        private void Update() {
+            if (currentState != null) {
                 currentState.Action();
+            } else {
+                Debug.LogError(string.Format("StatMachine: {0} does not have a current state. Please set it in the editor!", this));
             }
         }
         #endregion
@@ -54,27 +60,32 @@ namespace Extensions.States {
         /// Change the state given a valid state key. Store the previous state in case we want to go back.
         /// </summary>
         public void ChangeState(string aStateKey) {
-            if (changingState == false) {
-                changingState = true;
+            ChangeState(aStateKey, null);
+        }
 
-                if (states != null && string.IsNullOrEmpty(aStateKey) == false) {
-                    State nextState = states.Find(s => s.Key == aStateKey.Trim());
-                    if (nextState != null && currentState.CanTransition(nextState)) {
-                        currentState.Disable();
-                        previousState = currentState;
-                        currentState = nextState;
-                        currentState.Enable();
-                    }
+        /// <summary>
+        /// Change the state given a valid state key. Store the previous state in case we want to go back.
+        /// </summary>
+        public void ChangeState(string aStateKey, Dictionary<string, object> aData) {
+            changingState = true;
 
-                    #if UNITY_EDITOR
-                        if (nextState == null) {
-                            Debug.LogWarning(string.Format("State: {0} on Object: {1} does not exist in StateMachine", aStateKey, gameObject));
-                        }
-                    #endif
+            if (states != null && string.IsNullOrEmpty(aStateKey) == false) {
+                State nextState = states.Find(s => s.Key == aStateKey.Trim());
+                if (nextState != null && currentState.CanTransition(nextState)) {
+                    currentState.Disable();
+                    previousState = currentState;
+                    currentState = nextState;
+                    currentState.Enable(aData);
                 }
 
-                changingState = false;
+#if UNITY_EDITOR
+                if (nextState == null) {
+                    Debug.LogWarning(string.Format("State: {0} on Object: {1} does not exist in StateMachine", aStateKey, gameObject));
+                }
+#endif
             }
+
+            changingState = false;
         }
 
         public void ReturnToPreviousState() {

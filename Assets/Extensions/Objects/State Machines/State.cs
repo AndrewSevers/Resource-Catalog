@@ -32,7 +32,7 @@ namespace Extensions.States {
             stateMachine = aStateMachine;
         }
 
-        public virtual void Enable() { }
+        public virtual void Enable(Dictionary<string, object> aData = null) { }
         public virtual void Action() { }
         public virtual void Disable() { }
         #endregion

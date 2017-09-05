@@ -16,7 +16,7 @@ namespace Extensions.Editor {
 		private SerializedProperty currentState;
 
 		private List<State> states;
-		private List<string> availableStates = new List<string>();  // All states available on the current StateMachine
+		private List<string> availableStates;  // All states available on the current StateMachine
 
 		private List<GUIContent> possibleStates = new List<GUIContent>();   // All states that can be added to the current StateMachine (text: Name, tooltip: FullName)
 
@@ -32,13 +32,11 @@ namespace Extensions.Editor {
 		private void SetupStates() {
 			currentState = serializedObject.FindProperty("currentState");
 
-			states = Reflection.GetPrivateFieldValue<List<State>>(currentTarget, "states");
-			if (states == null) {
-				states = new List<State>();
-			}
+			states = new List<State>();
+            availableStates = new List<string>();
 
-			// Get all states on the object that are not already in the list (this allows for the AddComponent dialogue to work)
-			State[] foundStates = currentTarget.GetComponentsInChildren<State>();
+            // Get all states on the object that are not already in the list (this allows for the AddComponent dialogue to work)
+            State[] foundStates = currentTarget.GetComponentsInChildren<State>();
 			foreach (State foundState in foundStates) {
 				if (states.Contains(foundState) == false) {
 					states.Add(foundState);
@@ -76,7 +74,7 @@ namespace Extensions.Editor {
 			DrawInspector(serializedObject);
 		}
 
-		// This method is DrawDefaultInspector but extended to allow for overriable fields
+		// This method is DrawDefaultInspector but extended to allow for overridable fields
 		private bool DrawInspector(SerializedObject aObject) {
 			EditorGUI.BeginChangeCheck();
 			aObject.Update();
@@ -134,18 +132,18 @@ namespace Extensions.Editor {
 				// Update state slot
 				int newStateIndex = EditorGUILayout.Popup(stateIndex, possibleStates.ToArray(), GUILayout.Height(16.0f));
 				if (stateIndex != newStateIndex && possibleStates[newStateIndex].tooltip != StringUtils.NONE) {
-					if (currentTarget.GetComponent(possibleStates[newStateIndex].tooltip) != null) {
-						Debug.LogWarning(string.Format("Adding duplicate state '{0}' to gameobject", possibleStates[newStateIndex].text));
-					}
+                    if (currentTarget.GetComponent(possibleStates[newStateIndex].tooltip) == null) {
+                        Undo.RecordObject(currentTarget, "Adding / Changing State");
 
-					Undo.RecordObject(currentTarget, "Adding / Changing State");
+                        availableStates[i] = possibleStates[newStateIndex].tooltip;
 
-					availableStates[i] = possibleStates[newStateIndex].tooltip;
+                        Type componentType = Type.GetType(availableStates[i] + ",Assembly-CSharp");
+                        states[i] = (State) currentTarget.gameObject.AddComponent(componentType);
 
-					Type componentType = Type.GetType(availableStates[i] + ",Assembly-CSharp");
-					states[i] = (State) currentTarget.gameObject.AddComponent(componentType);
-
-					Reflection.SetPrivateFieldValue<List<State>>(currentTarget, "states", states);
+                        Reflection.SetPrivateFieldValue<List<State>>(currentTarget, "states", states);
+                    } else {
+                        Debug.LogWarning(string.Format("GameObject '{0}' already contains state '{1}'", currentTarget.name, possibleStates[newStateIndex].text));
+                    }
 				}
 
 				// Toggle between Name/FullName (Display/Path)
