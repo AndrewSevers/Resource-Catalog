@@ -8,27 +8,26 @@ namespace Extensions.Collections {
 	/// <typeparam name="K">Key</typeparam>
 	/// <typeparam name="V">Value</typeparam>
 	public class MultiDictionary<K, V> {
-		private Dictionary<K, List<V>> dictionary;
+		private Dictionary<K, List<V>> dictionary = null;
 
 		#region Constructor
-		public MultiDictionary(int aAmount = 0) {
-			dictionary = new Dictionary<K, List<V>>(aAmount);
+		public MultiDictionary(int size = 0) {
+			dictionary = new Dictionary<K, List<V>>(size);
 		}
 		#endregion
 
 		#region Base Accessor
-		public List<V> this[K aKey] {
+		public List<V> this[K key] {
 			get {
-				List<V> item;
-				if (dictionary.TryGetValue(aKey, out item)) {
+				if (dictionary.TryGetValue(key, out List<V> item)) {
 					return item;
 				}
 
-				throw new KeyNotFoundException(string.Format("Key '{0}' not found within dictionary.", aKey));
+				throw new KeyNotFoundException(string.Format("Key '{0}' not found within dictionary.", key));
 			}
 
 			set {
-				dictionary[aKey] = value;
+				dictionary[key] = value;
 			}
 		}
 		#endregion
@@ -37,71 +36,63 @@ namespace Extensions.Collections {
 		/// <summary>
 		/// Add a single value to the list of values for the given key
 		/// </summary>
-		public void Add(K aKey, V aValue) {
-			List<V> values;
-
-			if (dictionary.TryGetValue(aKey, out values) == false) {
-				values = new List<V>();
+		public void Add(K key, V value) {
+			if (dictionary.TryGetValue(key, out List<V> items) == false) {
+				items = new List<V>();
 			}
 
-			values.Add(aValue);
-			dictionary[aKey] = values;
+			items.Add(value);
+			dictionary[key] = items;
 		}
 
 		/// <summary>
 		/// Add a group amount of values to the list of values for the given key
 		/// </summary>
-		public void Add(K aKey, params V[] aValues) {
-			List<V> values;
-
-			if (dictionary.TryGetValue(aKey, out values) == false) {
-				values = new List<V>();
-				dictionary[aKey] = values;
+		public void Add(K key, params V[] values) {
+			if (dictionary.TryGetValue(key, out List<V> items) == false) {
+				items = new List<V>();
+				dictionary[key] = items;
 			}
 
-			foreach (V value in aValues) {
-				values.Add(value);
+			foreach (V value in values) {
+				items.Add(value);
 			}
 		}
 
 		/// <summary>
 		/// Remove an entire key-value pair based on the given key
 		/// </summary>
-		public void Remove(K aKey) {
-			dictionary.Remove(aKey);
+		public void Remove(K key) {
+			dictionary.Remove(key);
 		}
 
 		/// <summary>
 		/// Remove a single value from the given key
 		/// </summary>
-		public void Remove(K aKey, V aValue) {
-			List<V> values;
-
-			if (dictionary.TryGetValue(aKey, out values)) {
-				values.Remove(aValue);
+		public void Remove(K key, V value) {
+			if (dictionary.TryGetValue(key, out List<V> items)) {
+				items.Remove(value);
 			}
 		}
 
 		/// <summary>
 		/// Remove a group of values from the given key
 		/// </summary>
-		public void Remove(K aKey, params V[] aValues) {
-			List<V> values;
-
-			if (dictionary.TryGetValue(aKey, out values) == false) {
-				values = new List<V>();
-				dictionary[aKey] = values;
+		public void Remove(K key, params V[] values) {
+			if (dictionary.TryGetValue(key, out List<V> items) == false) {
+				items = new List<V>();
+				dictionary[key] = items;
 			}
 
-			foreach (V value in aValues) {
-				values.Remove(value);
+			foreach (V value in values) {
+				items.Remove(value);
 			}
 		}
 
-		public bool TryGetValue(K aKey, out List<V> aValues) {
+		public bool TryGetValue(K key, out List<V> aValues) {
 			aValues = default(List<V>);
 
-			return dictionary.TryGetValue(aKey, out aValues);
+			return dictionary.TryGetValue(key, out aValues);
 		}
 		#endregion
 
@@ -130,11 +121,9 @@ namespace Extensions.Collections {
 		/// <summary>
 		/// Returns the number of values for the given key
 		/// </summary>
-		public int ValueCount(K aKey) {
-			List<V> values;
-
-			if (dictionary.TryGetValue(aKey, out values)) {
-				return values.Count;
+		public int ValueCount(K key) {
+			if (dictionary.TryGetValue(key, out List<V> items)) {
+				return items.Count;
 			}
 
 			return 0;
@@ -143,8 +132,8 @@ namespace Extensions.Collections {
 		/// <summary>
 		/// Returns whether or not the given key is contained within the dictionaries keys
 		/// </summary>
-		public bool ContainsKey(K aKey) {
-			return dictionary.ContainsKey(aKey);
+		public bool ContainsKey(K key) {
+			return dictionary.ContainsKey(key);
 		}
 
 		/// <summary>

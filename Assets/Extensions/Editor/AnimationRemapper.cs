@@ -38,11 +38,7 @@ namespace Resource.Editor {
 
         [MenuItem("GameObject/Remap Animation", true)]
         private static bool ValidateAnimatorStatus() {
-            bool hasAnimator = (Selection.activeGameObject.GetComponent<Animator>() != null);
-
-            if (hasAnimator == false) {
-                Debug.Log("[AnimationRemapper] GameObject does not have an animator!");
-            }
+            bool hasAnimator = (Selection.activeGameObject != null && Selection.activeGameObject.GetComponent<Animator>() != null);
 
             return hasAnimator;
         }

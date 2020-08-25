@@ -2,72 +2,72 @@ using UnityEngine;
 
 namespace Extensions.Properties {
 
+  /// <summary>
+  /// Support drag-n-drop and clickable object references in the inspector while actually storing their references as a string as to reduce memory consumption
+  /// </summary>
+  public class AssetPathAttribute : PropertyAttribute {
+    private AssetType type;
+    private SystemType systemType;
+
+    #region Getters & Setters
+    public AssetType AssetType {
+      get { return type; }
+    }
+
+    public SystemType SystemType {
+      get { return systemType; }
+    }
+    #endregion
+
+    #region Constructor
     /// <summary>
-    /// Support drag-n-drop and clickable object references in the inspector while actually storing their references as a string as to reduce memory consumption
+    /// Configure an interface that supports object drag and drop to determine the the file's path
     /// </summary>
-    public class AssetPathAttribute : PropertyAttribute {
-        private AssetType type;
-        private SystemType systemType;
+    /// <param name="aType">Type of the asset to load. The produced string depends on the type.</param>
+    public AssetPathAttribute(AssetType aType = AssetType.Resource, SystemType aSystemType = SystemType.GameObject) {
+      type = aType;
+      systemType = aSystemType;
+    }
+    #endregion
+  }
 
-        #region Getters & Setters
-        public AssetType AssetType {
-            get { return type; }
-        }
+  [System.Serializable]
+  public class Asset {
+    [SerializeField]
+    private string resourcePath;
+    [SerializeField]
+    private string assetPath;
 
-        public SystemType SystemType {
-            get { return systemType; }
-        }
-        #endregion
-
-        #region Constructor
-        /// <summary>
-        /// Configure an interface that supports object drag and drop to determine the the file's path
-        /// </summary>
-        /// <param name="aType">Type of the asset to load. The produced string depends on the type.</param>
-        public AssetPathAttribute(AssetType aType = AssetType.Resource, SystemType aSystemType = SystemType.GameObject) {
-            type = aType;
-            systemType = aSystemType;
-        }
-        #endregion
+    #region Getters & Setters
+    public string ResourcePath {
+      get { return resourcePath; }
     }
 
-    [System.Serializable]
-    public class Asset {
-        [SerializeField]
-        private string resourcePath;
-        [SerializeField]
-        private string assetPath;
-
-        #region Getters & Setters
-        public string ResourcePath {
-            get { return resourcePath; }
-        }
-
-        public string AssetPath {
-            get { return assetPath; }
-        }
-        #endregion
-
-        #region Constructor
-        public Asset(string aResourcePath = null, string aAssetPath = null) {
-            resourcePath = aResourcePath;
-            assetPath = aAssetPath;
-        }
-        #endregion
+    public string AssetPath {
+      get { return assetPath; }
     }
+    #endregion
 
-    public enum AssetType {
-        Asset,
-        Resource
+    #region Constructor
+    public Asset(string aResourcePath = null, string aAssetPath = null) {
+      resourcePath = aResourcePath;
+      assetPath = aAssetPath;
     }
+    #endregion
+  }
 
-    public enum SystemType {
-        GameObject,
-        AudioClip,
-        Text,
-        Material,
-        Shader,
-        Json
-    }
+  public enum AssetType {
+    Asset,
+    Resource
+  }
+
+  public enum SystemType {
+    GameObject,
+    AudioClip,
+    Text,
+    Material,
+    Shader,
+    Json
+  }
 
 }

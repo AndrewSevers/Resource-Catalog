@@ -2,26 +2,26 @@
 
 namespace Extensions {
 
-    public struct KeyValue {
-        private string key;
-        private object value;
+  public struct KeyValue {
+    private string _key;
+    private object _value;
 
-        #region Getters & Setters
-        public string Key {
-            get { return key; }
-        }
-
-        public object Value {
-            get { return value; }
-        }
-        #endregion
-
-        #region Constructor
-        public KeyValue(string aKey, object aValue) {
-            key = aKey;
-            value = aValue;
-        }
-        #endregion
+    #region Getters & Setters
+    public string Key {
+      get { return _key; }
     }
+
+    public object Value {
+      get { return _value; }
+    }
+    #endregion
+
+    #region Constructor
+    public KeyValue(string key, object value) {
+      _key = key;
+      _value = value;
+    }
+    #endregion
+  }
 
 }

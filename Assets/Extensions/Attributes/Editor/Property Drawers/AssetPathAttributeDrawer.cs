@@ -3,163 +3,167 @@ using UnityEngine;
 
 namespace Extensions.Properties {
 
-    [CustomPropertyDrawer(typeof(AssetPathAttribute))]
-    public class AssetPathAttributeDrawer : PropertyDrawer {
-        private bool showPath = false;
-        private bool isAsset = false;
-        private Object asset = null;
-        AssetPathAttribute assetAttribute;
+  [CustomPropertyDrawer(typeof(AssetPathAttribute))]
+  public class AssetPathAttributeDrawer : PropertyDrawer {
+    private bool showPath = false;
+    private bool isAsset = false;
+    private Object asset = null;
+    AssetPathAttribute assetAttribute;
 
-        private Texture textIcon = Resources.Load<Texture>("Images/ab-bold");
-        private Texture objectIcon = Resources.Load<Texture>("Images/box-3d");
+    private Texture textIcon = Resources.Load<Texture>("Images/ab-bold");
+    private Texture objectIcon = Resources.Load<Texture>("Images/box-3d");
 
-        #region GUI Functions
-        public override void OnGUI(Rect aRect, SerializedProperty aProperty, GUIContent aLabel) {
-            string associatedPath;
+    #region GUI Functions
+    public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
+      string associatedPath;
 
-            assetAttribute = attribute as AssetPathAttribute;
+      assetAttribute = attribute as AssetPathAttribute;
 
-            switch (aProperty.propertyType) {
-                case SerializedPropertyType.String:
-                    associatedPath = (assetAttribute.AssetType == AssetType.Asset) ? aProperty.stringValue : FormatToPath(aProperty.stringValue, AssetType.Resource, AssetType.Asset);
-                    switch (assetAttribute.SystemType) {
-                        case SystemType.GameObject:
-                            associatedPath += ".prefab";
-                            break;
-                        case SystemType.Material:
-                            associatedPath += ".mat";
-                            break;
-                    }
+      switch (property.propertyType) {
+        case SerializedPropertyType.String:
+          associatedPath = (assetAttribute.AssetType == AssetType.Asset) ? property.stringValue : FormatToPath(property.stringValue, AssetType.Resource, AssetType.Asset);
+          switch (assetAttribute.SystemType) {
+            case SystemType.GameObject:
+              associatedPath += ".prefab";
+              break;
+            case SystemType.Material:
+              associatedPath += ".mat";
+              break;
+          }
 
-                    isAsset = false;
+          isAsset = false;
 
-                    break;
-                default:
-                    if (aProperty.type == "Asset") {
-                        associatedPath = aProperty.FindPropertyRelative("assetPath").stringValue;
-                        isAsset = true;
+          break;
+        default:
+          if (property.type == "Asset") {
+            associatedPath = property.FindPropertyRelative("assetPath").stringValue;
+            isAsset = true;
 
-                        break;
-                    } else {
-                        EditorGUI.LabelField(aRect, aLabel.text, "Property must be a 'string' or 'Asset' property.");
-                    }
+            break;
+          } else {
+            EditorGUI.LabelField(rect, label.text, "Property must be a 'string' or 'Asset' property.");
+          }
 
-                    return;
-            }
+          return;
+      }
 
-            asset = AssetDatabase.LoadAssetAtPath(associatedPath, typeof(Object));
+      asset = AssetDatabase.LoadAssetAtPath(associatedPath, typeof(Object));
 
-            DisplayPathGUI(aRect, aProperty, aLabel);
-        }
-
-        private void DisplayPathGUI(Rect aRect, SerializedProperty aProperty, GUIContent aLabel) {
-            string path = null;
-
-            Rect original = new Rect(aRect);
-            aRect.width -= 30.0f;
-
-            if (showPath) {
-                if (isAsset) {
-                    SerializedProperty assetPath = aProperty.FindPropertyRelative("assetPath");
-                    SerializedProperty resourcePath = aProperty.FindPropertyRelative("resourcePath");
-
-                    EditorGUI.BeginChangeCheck();
-
-                    path = EditorGUI.TextField(aRect, aLabel, assetPath.stringValue);
-
-                    if (EditorGUI.EndChangeCheck()) {
-                        assetPath.stringValue = path;
-                        resourcePath.stringValue = FormatToPath(path, AssetType.Asset, AssetType.Resource);
-                    }
-                } else {
-                    EditorGUI.PropertyField(aRect, aProperty);
-                }
-            } else {
-                EditorGUI.BeginChangeCheck();
-
-                asset = EditorGUI.ObjectField(aRect, aLabel, asset, typeof(Object), false);
-
-                if (asset != null) {
-                    path = AssetDatabase.GetAssetPath(asset);
-                }
-
-                if (EditorGUI.EndChangeCheck()) {
-                    if (isAsset) {
-                        SerializedProperty assetPath = aProperty.FindPropertyRelative("assetPath");
-                        SerializedProperty resourcePath = aProperty.FindPropertyRelative("resourcePath");
-
-                        assetPath.stringValue = path;
-                        resourcePath.stringValue = FormatToPath(path, AssetType.Asset, AssetType.Resource);
-                    } else {
-                        aProperty.stringValue = FormatPath(path);
-                    }
-                }
-            }
-
-            original.x = original.width - (25.0f / 2);
-            original.width = 25.0f;
-
-            Texture icon = (showPath) ? objectIcon : textIcon;
-            if (GUI.Button(original, icon)) {
-                showPath = !showPath;
-            }
-        }
-        #endregion
-
-        #region Utilities
-        /// <summary>
-        /// Automatically format from Asset type to whatever the given type is defined in the attribute
-        /// </summary>
-        /// <param name="aPath">Path for format</param>
-        private string FormatPath(string aPath) {
-            AssetType type = (attribute as AssetPathAttribute).AssetType;
-
-            switch (type) {
-                case AssetType.Resource:
-                    return FormatToPath(aPath, AssetType.Asset, AssetType.Resource);
-                default:
-                    return aPath;
-            }
-        }
-
-        /// <summary>
-        /// Format from path format to new path format
-        /// </summary>
-        /// <param name="aPath">Path to format</param>
-        /// <param name="aFromType">Starting type</param>
-        /// <param name="aToType">Final type</param>
-        private string FormatToPath(string aPath, AssetType aFromType = AssetType.Asset, AssetType aToType = AssetType.Resource) {
-            switch (aFromType) {
-                case AssetType.Resource: // Resource format -> Any
-                    switch (aToType) {
-                        case AssetType.Asset:
-                            return ("Assets/Resources/" + aPath);
-                    }
-
-                    break;
-                case AssetType.Asset:  // Asset format -> any
-                    switch (aToType) {
-                        case AssetType.Resource:
-                            aPath = aPath.Remove(aPath.LastIndexOf('.'));
-                            aPath = aPath.Substring(aPath.LastIndexOf("Resources/") + "Resources/".Length);
-                            return aPath;
-                    }
-
-                    break;
-            }
-
-            return null;
-        }
-
-        public override float GetPropertyHeight(SerializedProperty aProperty, GUIContent aLabel) {
-            if (aProperty.type == "Asset") {
-                return EditorGUI.GetPropertyHeight(aProperty, aLabel) / 3.0f;
-            } else {
-                return EditorGUI.GetPropertyHeight(aProperty, aLabel);
-            }
-        }
-        #endregion
-
+      DisplayPathGUI(rect, property, label);
     }
+
+    private void DisplayPathGUI(Rect rect, SerializedProperty property, GUIContent label) {
+      string path = null;
+
+      Rect original = new Rect(rect);
+      rect.width -= 30.0f;
+
+
+      if (showPath) {
+        if (isAsset) {
+          SerializedProperty assetPath = property.FindPropertyRelative("assetPath");
+          SerializedProperty resourcePath = property.FindPropertyRelative("resourcePath");
+
+          EditorGUI.BeginChangeCheck();
+
+          path = EditorGUI.TextField(rect, label, assetPath.stringValue);
+
+          if (EditorGUI.EndChangeCheck()) {
+            assetPath.stringValue = path;
+            resourcePath.stringValue = FormatToPath(path, AssetType.Asset, AssetType.Resource);
+          }
+        } else {
+          EditorGUI.PropertyField(rect, property);
+        }
+      } else {
+        EditorGUI.BeginChangeCheck();
+
+        asset = EditorGUI.ObjectField(rect, label, asset, typeof(Object), false);
+
+        if (asset != null) {
+          path = AssetDatabase.GetAssetPath(asset);
+        }
+
+        if (EditorGUI.EndChangeCheck()) {
+          if (isAsset) {
+            SerializedProperty assetPath = property.FindPropertyRelative("assetPath");
+            SerializedProperty resourcePath = property.FindPropertyRelative("resourcePath");
+
+            assetPath.stringValue = path;
+            resourcePath.stringValue = FormatToPath(path, AssetType.Asset, AssetType.Resource);
+          } else {
+            property.stringValue = FormatPath(path);
+          }
+        }
+      }
+
+      original.x = original.width - (25.0f / 2);
+      original.width = 30.0f;
+
+      Texture icon = (showPath) ? objectIcon : textIcon;
+      if (GUI.Button(original, icon)) {
+        showPath = !showPath;
+      }
+    }
+    #endregion
+
+    #region Utilities
+    /// <summary>
+    /// Automatically format from Asset type to whatever the given type is defined in the attribute
+    /// </summary>
+    /// <param name="path">Path for format</param>
+    private string FormatPath(string path) {
+      AssetType type = (attribute as AssetPathAttribute).AssetType;
+
+      switch (type) {
+        case AssetType.Resource:
+          return FormatToPath(path, AssetType.Asset, AssetType.Resource);
+        default:
+          return path;
+      }
+    }
+
+    /// <summary>
+    /// Format from path format to new path format
+    /// </summary>
+    /// <param name="path">Path to format</param>
+    /// <param name="fromType">Starting type</param>
+    /// <param name="toType">Final type</param>
+    private string FormatToPath(string path, AssetType fromType = AssetType.Asset, AssetType toType = AssetType.Resource) {
+      switch (fromType) {
+        case AssetType.Resource: // Resource format -> Any
+          switch (toType) {
+            case AssetType.Asset:
+              Debug.LogWarning(string.Format("Asset: {0}", path));
+              return "Assets/" + path;
+          }
+
+          break;
+        case AssetType.Asset:  // Asset format -> any
+          switch (toType) {
+            case AssetType.Resource:
+              path = path.Remove(path.LastIndexOf('.'));
+              path = path.Substring(path.LastIndexOf("Resources/") + "Resources/".Length);
+
+              Debug.LogWarning(string.Format("Asset: {0}", path));
+              return path;
+          }
+
+          break;
+      }
+
+      return null;
+    }
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+      if (property.type == "Asset") {
+        return EditorGUI.GetPropertyHeight(property, label) / 3.0f;
+      } else {
+        return EditorGUI.GetPropertyHeight(property, label);
+      }
+    }
+    #endregion
+
+  }
 
 }

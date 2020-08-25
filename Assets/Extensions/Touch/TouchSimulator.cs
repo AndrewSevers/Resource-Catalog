@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Extensions.Touching {
 
-    public class TouchSimulator : MonoBehaviour {
-		[SerializeField]
-		private Texture cursorNormal;
-		[SerializeField]
-		private Texture cursorHighlight;
-		[SerializeField]
-		private Texture cursorHeld;
+  public class TouchSimulator : MonoBehaviour {
+    [SerializeField]
+    private Texture cursorNormal = null;
+    [SerializeField]
+    private Texture cursorHighlight = null;
+    [SerializeField]
+    private Texture cursorHeld = null;
 
 #if UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
 		private Vector2 fingerSize = new Vector2(113.0f / 2, 128.0f / 2);
@@ -18,7 +18,7 @@ namespace Extensions.Touching {
 		private static List<Touch> touches = new List<Touch>();
 		private static int fingerId;
 
-		#region Getters & Setters
+    #region Getters & Setters
 		public static Touch[] Touches {
 			get { return touches.ToArray(); }
 		}
@@ -26,9 +26,9 @@ namespace Extensions.Touching {
 		public static int TouchCount {
 			get { return touches.Count; }
 		}
-		#endregion
+    #endregion
 
-		#region Initialization
+    #region Initialization
 		void Start() {
 			TouchSimulator[] touchSimulators = FindObjectsOfType<TouchSimulator>();
 			if (touchSimulators.Length > 1) {
@@ -43,9 +43,9 @@ namespace Extensions.Touching {
 				fingerId = 0;
 			}
 		}
-		#endregion
+    #endregion
 
-		#region Update
+    #region Update
 		void Update() {
 			// Create an active finger for taps, drags, and swipes
 			if (Input.GetMouseButtonDown(0)) {
@@ -109,9 +109,9 @@ namespace Extensions.Touching {
 				}
 			}
 		}
-		#endregion
+    #endregion
 
-		#region Late Update
+    #region Late Update
 		void LateUpdate() {
 			// Change the state of fingers
 			for (int i = touches.Count - 1; i >= 0; i--) {
@@ -139,9 +139,9 @@ namespace Extensions.Touching {
 				}
 			}
 		}
-		#endregion
+    #endregion
 
-		#region GUI
+    #region GUI
 		void OnGUI() {
 			float buttonWidth = Screen.width / 8;
 			float buttonHeight = Screen.height / 16;
@@ -171,8 +171,8 @@ namespace Extensions.Touching {
 				}
 			}
 		}
-		#endregion
+    #endregion
 #endif
-	}
+  }
 
 }

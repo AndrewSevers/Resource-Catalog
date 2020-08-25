@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Extensions.Pooling {
 
-    public abstract class Pool {
-		protected GameObject container;
-		protected bool initialized = false;
+  public abstract class Pool {
+    protected GameObject container = null;
+    protected bool initialized = false;
 
-        public abstract void Return(PoolableObject aObject);
-	}
+    public abstract void Return(PoolableObject aObject);
+  }
 
 }

@@ -2,16 +2,16 @@ using UnityEngine;
 
 namespace Extensions.Properties {
 
-	/// <summary>
-	/// Display the given field as a read-only variable. 
-	/// Disallows any modifications to take place in the inspector.
-	/// </summary>
-	public class ReadOnlyAttribute : PropertyAttribute {
+  /// <summary>
+  /// Display the given field as a read-only variable. 
+  /// Disallows any modifications to take place in the inspector.
+  /// </summary>
+  public class ReadOnlyAttribute : PropertyAttribute {
 
-		#region Constructor
-		public ReadOnlyAttribute() { }
-		#endregion
+    #region Constructor
+    public ReadOnlyAttribute() { }
+    #endregion
 
-	}
+  }
 
 }

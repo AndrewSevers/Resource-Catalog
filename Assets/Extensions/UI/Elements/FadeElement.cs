@@ -1,4 +1,3 @@
-using Extensions.Properties;
 using System.Collections;
 using UnityEngine;
 
@@ -12,16 +11,16 @@ namespace Extensions.UI {
         [SerializeField, Min(0.01f), Tooltip("Duration it takes to fade in/out. Minimum value = 0.01")]
         private float duration = 1.0f;
 
-        private CanvasGroup canvasGroup;
-        private Coroutine fadeCoroutine;
-        private CachedFade existingFade;
+        private CanvasGroup canvasGroup = null;
+        private Coroutine fadeCoroutine = null;
+        private CachedFade existingFade = null;
 
         #region Cached Fade Class
         private class CachedFade {
-            private float start;
-            private float end;
-            private float duration;
-            private System.Action callback;
+            private float start = 0;
+            private float end = 0;
+            private float duration = 0;
+            private System.Action callback = null;
 
             #region Getters & Setters
             public float Start {
